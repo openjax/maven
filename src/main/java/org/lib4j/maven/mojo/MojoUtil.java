@@ -28,6 +28,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
@@ -100,6 +101,16 @@ public final class MojoUtil {
 
   public static boolean isInTestPhase(final MojoExecution execution) {
     return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
+  }
+
+  public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
+    if (dir.exists()) {
+      if (dir.isFile())
+        throw new MojoFailureException("Path at " + name + " directory is a file: " + dir.getAbsolutePath());
+    }
+    else if (!dir.mkdirs()) {
+      throw new MojoFailureException("Unable to create " + name + " directory: " + dir.getAbsolutePath());
+    }
   }
 
   private MojoUtil() {

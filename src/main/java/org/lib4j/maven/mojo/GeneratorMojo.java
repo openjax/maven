@@ -19,6 +19,7 @@ package org.lib4j.maven.mojo;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,10 +34,10 @@ public abstract class GeneratorMojo extends BaseMojo {
   protected class Configuration {
     private final File destDir;
     private final boolean overwrite;
-    private final URL[] resources;
+    private final URL[][] resources;
     private final boolean failOnNoOp;
 
-    public Configuration(final File destDir, final boolean overwrite, final URL[] resources, final boolean failOnNoOp) {
+    public Configuration(final File destDir, final boolean overwrite, final URL[][] resources, final boolean failOnNoOp) {
       this.destDir = destDir;
       this.overwrite = overwrite;
       this.resources = resources;
@@ -51,8 +52,8 @@ public abstract class GeneratorMojo extends BaseMojo {
       return this.overwrite;
     }
 
-    public URL[] getResources() {
-      return this.resources;
+    public URL[] getResources(int index) {
+      return this.resources[index];
     }
 
     public boolean isFailOnNoOp() {
@@ -73,42 +74,61 @@ public abstract class GeneratorMojo extends BaseMojo {
   @Parameter(property = "overwrite")
   private boolean overwrite = true;
 
-  @Parameter(property = "resources", required = true)
-  private List<String> resources;
+  protected abstract List<String>[] getResources();
 
   @Override
   public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
-    if (destDir.exists()) {
-      if (destDir.isFile())
-        throw new MojoFailureException("destDir points to a file");
+    MojoUtil.assertCreateDir("destination", destDir);
+
+    final List<String>[] resources = getResources();
+    final URL[][] resourceUrls;
+    if (resources == null) {
+      resourceUrls = null;
     }
-    else if (!destDir.mkdirs()) {
-      throw new MojoFailureException("Unable to create destination directory: " + destDir.getAbsolutePath());
+    else {
+      resourceUrls = new URL[resources.length][];
+      try {
+        final ResourceLabel resourceLabel = getClass().getDeclaredMethod("getResources").getAnnotation(ResourceLabel.class);
+        if (resourceLabel == null)
+          throw new MojoFailureException("getResources() must have a @ResourceLabel annotation");
+
+        if (resourceLabel.label().length != resources.length)
+          throw new MojoFailureException("@ResourceLabel annotation must have the same length 'label' array as number of resources");
+
+        if (resourceLabel.nonEmpty().length != resources.length)
+          throw new MojoFailureException("@ResourceLabel annotation must have the same length 'required' array as number of resources");
+
+        for (int i = 0; i < resources.length; i++) {
+          final List<String> resource = resources[i];
+          if (resource == null || resource.size() == 0) {
+            final String resourcesLabel = resourceLabel.label()[i];
+            if (!resourceLabel.nonEmpty()[i])
+              continue;
+
+            if (failOnNoOp)
+              throw new MojoExecutionException("Empty " + resourcesLabel + " (failOnNoOp=true).");
+
+            getLog().info("Skipping due to empty " + resourcesLabel + ".");
+            return;
+          }
+
+          resourceUrls[i] = new URL[resource.size()];
+          final Iterator<String> iterator = resource.iterator();
+          for (int j = 0; j < 10 && iterator.hasNext(); j++)
+            resourceUrls[i][j] = buildURL(project.getBasedir().getAbsoluteFile(), iterator.next());
+        }
+      }
+      catch (final MalformedURLException | NoSuchMethodException e) {
+        throw new MojoFailureException(null, e);
+      }
     }
 
-    if (resources.size() == 0) {
-      if (failOnNoOp)
-        throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true).");
-
-      getLog().info("Skipping due to empty resources.");
-      return;
-    }
+    execute(new Configuration(destDir, overwrite, resourceUrls, failOnNoOp));
 
     if (isInTestPhase())
       project.addTestCompileSourceRoot(destDir.getAbsolutePath());
     else
       project.addCompileSourceRoot(destDir.getAbsolutePath());
-
-    try {
-      final URL[] urls = new URL[resources.size()];
-      for (int i = 0; i < urls.length; i++)
-        urls[i] = buildURL(project.getBasedir().getAbsoluteFile(), resources.get(i));
-
-      execute(new Configuration(destDir, overwrite, urls, failOnNoOp));
-    }
-    catch (final MalformedURLException e) {
-      throw new MojoExecutionException(null, e);
-    }
   }
 
   public abstract void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException;
