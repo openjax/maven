@@ -1,4 +1,4 @@
-package org.libx4j.maven.specification;
+package org.lib4j.maven.mojo;
 
 import java.io.File;
 import java.io.FileFilter;

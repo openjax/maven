@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.maven.specification;
+package org.lib4j.maven.mojo;
 
 import java.io.File;
 import java.net.MalformedURLException;
