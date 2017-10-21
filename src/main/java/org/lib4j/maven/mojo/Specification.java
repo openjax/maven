@@ -84,7 +84,7 @@ public class Specification {
   }
 
   private static URL buildURL(final File baseDir, final String path) throws MalformedURLException {
-    return URLs.isAbsolute(path) ? URLs.makeUrlFromPath(path) : baseDir == null ? new File(path).toURI().toURL() : new File(baseDir, path).toURI().toURL();
+    return URLs.isAbsolute(path) ? URLs.makeCanonicalUrlFromPath(path) : baseDir == null ? new File(path).toURI().toURL() : new File(baseDir, path).toURI().toURL();
   }
 
   private final boolean overwrite;

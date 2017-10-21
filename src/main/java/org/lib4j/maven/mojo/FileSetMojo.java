@@ -125,19 +125,24 @@ public abstract class FileSetMojo extends ResourcesMojo {
       final LinkedHashSet<URL> urls = getFiles(project, configuration.getResources(), this);
       if (resources != null && resources.size() > 0) {
         final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
-        final List<String> classPath = MojoUtil.getPluginDependencyClassPath((PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler);
-        classPath.addAll(project.getCompileClasspathElements());
-        classPath.addAll(project.getRuntimeClasspathElements());
+        final List<String> classPaths = new ArrayList<String>();
+        project.getResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
+        classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler));
+        classPaths.addAll(project.getRuntimeClasspathElements());
+        classPaths.addAll(project.getCompileClasspathElements());
         if (isInTestPhase()) {
-          classPath.addAll(project.getTestClasspathElements());
-          classPath.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository, artifactHandler));
+          project.getTestResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
+          classPaths.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository, artifactHandler));
+          classPaths.addAll(project.getTestClasspathElements());
         }
 
-        final List<URL> classPathURLs = new ArrayList<URL>();
-        for (final String path : classPath)
-          classPathURLs.add(URLs.makeUrlFromPath(path));
+        final URL[] classPathURLs = new URL[classPaths.size()];
+        for (int i = 0; i < classPathURLs.length; i++) {
+          final String path = classPaths.get(i);
+          classPathURLs[i] = URLs.makeUrlFromPath(path + (path.endsWith(".jar") ? "" : "/"));
+        }
 
-        try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs.toArray(new URL[classPathURLs.size()]), Thread.currentThread().getContextClassLoader())) {
+        try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {
           for (final String resource : resources) {
             final URL url = classLoader.getResource(resource);
             if (url == null)
