@@ -51,16 +51,4 @@
       <artifactId>maven-plugin-annotations</artifactId>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>mvn.repo.lib4j.org</id>
-      <url>http://mvn.repo.lib4j.org/m2</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>mvn.repo.lib4j.org</id>
-      <url>http://mvn.repo.lib4j.org/m2</url>
-    </pluginRepository>
-  </pluginRepositories>
 </project>
