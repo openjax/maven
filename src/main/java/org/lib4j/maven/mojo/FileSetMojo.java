@@ -40,7 +40,7 @@ import org.apache.maven.project.MavenProject;
 import org.lib4j.io.Files;
 import org.lib4j.net.URLs;
 
-@Mojo(name = "fileset")
+@Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws MalformedURLException {
     final LinkedHashSet<URL> urls = new LinkedHashSet<URL>();
@@ -97,7 +97,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
     }
   }
 
-  @Parameter(property = "includes")
+  @Parameter(property="includes")
   private List<String> includes;
 
   public List<String> getIncludes() {
@@ -105,7 +105,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
     return this.includes;
   }
 
-  @Parameter(property = "excludes")
+  @Parameter(property="excludes")
   private List<String> excludes;
 
   public List<String> getExcludes() {
@@ -113,10 +113,10 @@ public abstract class FileSetMojo extends ResourcesMojo {
     return this.excludes;
   }
 
-  @Parameter(property = "resources")
+  @Parameter(property="resources")
   private List<String> resources;
 
-  @Parameter(defaultValue = "${localRepository}")
+  @Parameter(defaultValue="${localRepository}")
   private ArtifactRepository localRepository;
 
   @Override

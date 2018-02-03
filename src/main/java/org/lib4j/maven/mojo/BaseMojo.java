@@ -23,18 +23,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-@Mojo(name = "base")
+@Mojo(name="base")
 public abstract class BaseMojo extends AbstractMojo {
-  @Parameter(property = "failOnNoOp")
+  @Parameter(property="failOnNoOp")
   private boolean failOnNoOp = true;
 
-  @Parameter(property = "maven.test.skip")
+  @Parameter(property="maven.test.skip")
   private boolean mavenTestSkip = false;
 
-  @Parameter(property = "skip")
+  @Parameter(property="skip")
   private boolean skip = false;
 
-  @Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
+  @Parameter(defaultValue="${mojoExecution}", required=true, readonly=true)
   protected MojoExecution execution;
 
   private Boolean inTestPhase;

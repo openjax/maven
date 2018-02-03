@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.lib4j.net.URLs;
 
-@Mojo(name = "generator")
+@Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {
   protected class Configuration {
     private final File destDir;
@@ -65,13 +65,13 @@ public abstract class GeneratorMojo extends BaseMojo {
     return URLs.isAbsolute(path) ? URLs.makeCanonicalUrlFromPath(path) : baseDir == null ? new File(path).toURI().toURL() : new File(baseDir, path).toURI().toURL();
   }
 
-  @Parameter(defaultValue = "${project}", required = true, readonly = true)
+  @Parameter(defaultValue="${project}", required=true, readonly=true)
   protected MavenProject project;
 
-  @Parameter(property = "destDir", required = true)
+  @Parameter(property="destDir", required=true)
   private File destDir;
 
-  @Parameter(property = "overwrite")
+  @Parameter(property="overwrite")
   private boolean overwrite = true;
 
   protected abstract List<String>[] getResources();

@@ -27,7 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.lib4j.util.Collections;
 
-@Mojo(name = "resources")
+@Mojo(name="resources")
 public abstract class ResourcesMojo extends BaseMojo {
   protected class Configuration {
     private final boolean failOnNoOp;
@@ -58,13 +58,13 @@ public abstract class ResourcesMojo extends BaseMojo {
     }
   }
 
-  @Parameter(defaultValue = "${project.resources}", required = true, readonly = true)
+  @Parameter(defaultValue="${project.resources}", required=true, readonly=true)
   private List<Resource> mainResources;
 
-  @Parameter(defaultValue = "${project.testResources}", required = true, readonly = true)
+  @Parameter(defaultValue="${project.testResources}", required=true, readonly=true)
   private List<Resource> testResources;
 
-  @Parameter(defaultValue = "${project}", required = true, readonly = true)
+  @Parameter(defaultValue="${project}", required=true, readonly=true)
   protected MavenProject project;
 
   @Override
