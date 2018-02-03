@@ -40,7 +40,7 @@ public abstract class BaseMojo extends AbstractMojo {
   private Boolean inTestPhase;
 
   public boolean isInTestPhase() {
-    return inTestPhase == null ? MojoUtil.isInTestPhase(execution) : inTestPhase;
+    return inTestPhase == null ? inTestPhase = MojoUtil.isInTestPhase(execution) : inTestPhase;
   }
 
   @Override

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
@@ -111,6 +112,22 @@ public final class MojoUtil {
     else if (!dir.mkdirs()) {
       throw new MojoFailureException("Unable to create " + name + " directory: " + dir.getAbsolutePath());
     }
+  }
+
+  public static File[] getExecutionClasspash(final MojoExecution execution, final PluginDescriptor pluginDescriptor, final MavenProject project, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) throws DependencyResolutionRequiredException {
+    final List<String> classpath = MojoUtil.getPluginDependencyClassPath(pluginDescriptor, localRepository, artifactHandler);
+    classpath.addAll(project.getCompileClasspathElements());
+    classpath.addAll(project.getRuntimeClasspathElements());
+    if (MojoUtil.isInTestPhase(execution)) {
+      classpath.addAll(project.getTestClasspathElements());
+      classpath.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository, artifactHandler));
+    }
+
+    final File[] classpathFiles = new File[classpath.size()];
+    for (int i = 0; i < classpathFiles.length; i++)
+      classpathFiles[i] = new File(classpath.get(i));
+
+    return classpathFiles;
   }
 
   private MojoUtil() {
