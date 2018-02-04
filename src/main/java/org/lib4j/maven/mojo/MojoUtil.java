@@ -17,8 +17,11 @@
 package org.lib4j.maven.mojo;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -29,10 +32,12 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
+import org.lib4j.net.URLs;
 
 public final class MojoUtil {
   public static PluginExecution getPluginExecution(final MojoExecution mojoExecution) {
@@ -128,6 +133,19 @@ public final class MojoUtil {
       classpathFiles[i] = new File(classpath.get(i));
 
     return classpathFiles;
+  }
+
+  private static final Pattern replacePattern = Pattern.compile("^\\/((([^\\/])|(\\\\/))+)\\/((([^\\/])|(\\\\/))+)\\/$");
+
+  public static String getRenamedFileName(final URL url, final String rename) throws MojoExecutionException {
+    if (rename == null)
+      return URLs.getName(url);;
+
+    final Matcher matcher = replacePattern.matcher(rename);
+    if (!matcher.matches())
+      throw new MojoExecutionException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
+
+    return URLs.getName(url).replaceAll(matcher.group(1), matcher.group(5));
   }
 
   private MojoUtil() {
