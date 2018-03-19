@@ -79,22 +79,22 @@ public final class MojoUtil {
   }
 
   public static String getPathOf(final ArtifactRepository localRepository, final ArtifactHandler artifactHandler, final Dependency dependency) {
-    final StringBuilder string = new StringBuilder();
-    string.append(localRepository.getBasedir());
-    string.append(File.separatorChar);
-    string.append(dependency.getGroupId().replace('.', File.separatorChar));
-    string.append(File.separatorChar);
-    string.append(dependency.getArtifactId());
-    string.append(File.separatorChar);
-    string.append(dependency.getVersion());
-    string.append(File.separatorChar);
-    string.append(dependency.getArtifactId());
-    string.append('-');
-    string.append(dependency.getVersion());
+    final StringBuilder builder = new StringBuilder();
+    builder.append(localRepository.getBasedir());
+    builder.append(File.separatorChar);
+    builder.append(dependency.getGroupId().replace('.', File.separatorChar));
+    builder.append(File.separatorChar);
+    builder.append(dependency.getArtifactId());
+    builder.append(File.separatorChar);
+    builder.append(dependency.getVersion());
+    builder.append(File.separatorChar);
+    builder.append(dependency.getArtifactId());
+    builder.append('-');
+    builder.append(dependency.getVersion());
     if ("test-jar".equals(dependency.getType()))
-      string.append("-tests");
+      builder.append("-tests");
 
-    return string.append(".jar").toString();
+    return builder.append(".jar").toString();
   }
 
   public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
