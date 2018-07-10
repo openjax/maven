@@ -132,7 +132,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
         classPaths.addAll(project.getCompileClasspathElements());
         if (isInTestPhase()) {
           project.getTestResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
-          classPaths.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository, artifactHandler));
+          classPaths.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository));
           classPaths.addAll(project.getTestClasspathElements());
         }
 

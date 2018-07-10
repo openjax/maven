@@ -42,10 +42,10 @@ public class Specification {
       throw new MojoFailureException("Configuration is required");
 
     final Xpp3Dom configuration = plugin.getConfiguration() == null ? pluginExecution == null ? null : (Xpp3Dom)pluginExecution.getConfiguration() : pluginExecution.getConfiguration() == null ? (Xpp3Dom)plugin.getConfiguration() : Xpp3Dom.mergeXpp3Dom((Xpp3Dom)plugin.getConfiguration(), (Xpp3Dom)pluginExecution.getConfiguration());
-    return configuration == null ? null : parse(configuration.getChild("manifest"), plugin, project);
+    return configuration == null ? null : parse(configuration.getChild("manifest"), project);
   }
 
-  private static Specification parse(final Xpp3Dom manifest, final Plugin plugin, final MavenProject project) throws MojoFailureException {
+  private static Specification parse(final Xpp3Dom manifest, final MavenProject project) throws MojoFailureException {
     if (manifest == null)
       throw new MojoFailureException("Manifest is required");
 

@@ -78,7 +78,7 @@ public final class MojoUtil {
     return classPath;
   }
 
-  public static String getPathOf(final ArtifactRepository localRepository, final ArtifactHandler artifactHandler, final Dependency dependency) {
+  public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
     final StringBuilder builder = new StringBuilder();
     builder.append(localRepository.getBasedir());
     builder.append(File.separatorChar);
@@ -97,10 +97,10 @@ public final class MojoUtil {
     return builder.append(".jar").toString();
   }
 
-  public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
+  public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository) {
     final List<String> classPath = new ArrayList<String>();
     for (final Dependency dependency : project.getExecutionProject().getDependencies())
-      classPath.add(getPathOf(localRepository, artifactHandler, dependency));
+      classPath.add(getPathOf(localRepository, dependency));
 
     return classPath;
   }
@@ -125,7 +125,7 @@ public final class MojoUtil {
     classpath.addAll(project.getRuntimeClasspathElements());
     if (MojoUtil.isInTestPhase(execution)) {
       classpath.addAll(project.getTestClasspathElements());
-      classpath.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository, artifactHandler));
+      classpath.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository));
     }
 
     final File[] classpathFiles = new File[classpath.size()];
