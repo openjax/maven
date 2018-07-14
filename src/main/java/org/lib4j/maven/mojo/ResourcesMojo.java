@@ -69,7 +69,7 @@ public abstract class ResourcesMojo extends BaseMojo {
 
   @Override
   public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
-    final List<Resource> projectResources = new ArrayList<Resource>();
+    final List<Resource> projectResources = new ArrayList<>();
     if (this.mainResources != null)
       projectResources.addAll(mainResources);
 

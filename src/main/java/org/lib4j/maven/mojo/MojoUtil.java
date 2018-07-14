@@ -71,7 +71,7 @@ public final class MojoUtil {
   }
 
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
-    final List<String> classPath = new ArrayList<String>();
+    final List<String> classPath = new ArrayList<>();
     for (final ComponentDependency dependency : pluginDescriptor.getDependencies())
       classPath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, artifactHandler)));
 
@@ -98,7 +98,7 @@ public final class MojoUtil {
   }
 
   public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository) {
-    final List<String> classPath = new ArrayList<String>();
+    final List<String> classPath = new ArrayList<>();
     for (final Dependency dependency : project.getExecutionProject().getDependencies())
       classPath.add(getPathOf(localRepository, dependency));
 

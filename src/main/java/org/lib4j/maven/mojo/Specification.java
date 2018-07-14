@@ -50,7 +50,7 @@ public class Specification {
       throw new MojoFailureException("Manifest is required");
 
     File destDir = null;
-    final LinkedHashSet<URL> resources = new LinkedHashSet<URL>();
+    final LinkedHashSet<URL> resources = new LinkedHashSet<>();
     boolean overwrite = true;
 
     try {

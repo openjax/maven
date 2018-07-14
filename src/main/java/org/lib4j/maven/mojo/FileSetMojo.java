@@ -43,7 +43,7 @@ import org.lib4j.net.URLs;
 @Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws MalformedURLException {
-    final LinkedHashSet<URL> urls = new LinkedHashSet<URL>();
+    final LinkedHashSet<URL> urls = new LinkedHashSet<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       final List<File> xmlFiles = Files.listAll(dir, FileSetMojo.filter(project.getBasedir(), fileSet));
@@ -125,7 +125,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
       final LinkedHashSet<URL> urls = getFiles(project, configuration.getResources(), this);
       if (resources != null && resources.size() > 0) {
         final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
-        final List<String> classPaths = new ArrayList<String>();
+        final List<String> classPaths = new ArrayList<>();
         project.getResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
         classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler));
         classPaths.addAll(project.getRuntimeClasspathElements());
