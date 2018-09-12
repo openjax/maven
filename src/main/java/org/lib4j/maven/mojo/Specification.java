@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.lib4j.net.URLs;
-import org.lib4j.util.Paths;
+import org.fastjax.util.Paths;
 
 public class Specification {
   public static Specification parse(final MavenProject project, final MojoExecution mojoExecution) throws MojoFailureException {
