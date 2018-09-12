@@ -37,7 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
-import org.lib4j.net.URLs;
+import org.fastjax.net.URLs;
 
 public final class MojoUtil {
   public static PluginExecution getPluginExecution(final MojoExecution mojoExecution) {

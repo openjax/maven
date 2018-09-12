@@ -29,7 +29,7 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.lib4j.net.URLs;
+import org.fastjax.net.URLs;
 import org.fastjax.util.Paths;
 
 public class Specification {

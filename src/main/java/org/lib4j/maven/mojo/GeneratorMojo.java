@@ -27,7 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.lib4j.net.URLs;
+import org.fastjax.net.URLs;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {

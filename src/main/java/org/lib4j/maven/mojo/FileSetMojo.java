@@ -38,7 +38,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.lib4j.io.Files;
-import org.lib4j.net.URLs;
+import org.fastjax.net.URLs;
 
 @Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
