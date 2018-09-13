@@ -37,7 +37,7 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.lib4j.io.Files;
+import org.fastjax.io.Files;
 import org.fastjax.net.URLs;
 
 @Mojo(name="fileset")
