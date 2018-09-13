@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.lib4j.maven.mojo;
+package org.easyjax.maven.mojo;
 
 import java.util.ArrayList;
 import java.util.List;
