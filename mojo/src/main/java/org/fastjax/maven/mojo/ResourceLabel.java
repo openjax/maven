@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 EasyJAX
+/* Copyright (c) 2017 FastJAX
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.easyjax.maven.mojo;
+package org.fastjax.maven.mojo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
