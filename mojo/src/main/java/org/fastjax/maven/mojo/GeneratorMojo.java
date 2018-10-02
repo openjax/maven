@@ -52,7 +52,7 @@ public abstract class GeneratorMojo extends BaseMojo {
       return this.overwrite;
     }
 
-    public URL[] getResources(int index) {
+    public URL[] getResources(final int index) {
       return this.resources[index];
     }
 
@@ -90,13 +90,13 @@ public abstract class GeneratorMojo extends BaseMojo {
       try {
         final ResourceLabel resourceLabel = getClass().getDeclaredMethod("getResources").getAnnotation(ResourceLabel.class);
         if (resourceLabel == null)
-          throw new MojoFailureException("getResources() must have a @ResourceLabel annotation");
+          throw new MojoFailureException("getResources() is missing @" + ResourceLabel.class.getSimpleName() + " annotation");
 
         if (resourceLabel.label().length != resources.length)
-          throw new MojoFailureException("@ResourceLabel annotation must have the same length 'label' array as number of resources");
+          throw new MojoFailureException("@" + ResourceLabel.class.getSimpleName() + " annotation must have the same length 'label' array as number of resources");
 
         if (resourceLabel.nonEmpty().length != resources.length)
-          throw new MojoFailureException("@ResourceLabel annotation must have the same length 'required' array as number of resources");
+          throw new MojoFailureException("@" + ResourceLabel.class.getSimpleName() + " annotation must have the same length 'required' array as number of resources");
 
         for (int i = 0; i < resources.length; i++) {
           final List<String> resource = resources[i];
