@@ -92,16 +92,44 @@ public final class MojoUtil {
     return pluginExecution != null && pluginExecution.getPhase() != null && pluginExecution.getPhase().contains("test");
   }
 
+  /**
+   * Returns a {@code Artifact} representation of {@code dependency}, qualified
+   * by {@code artifactHandler}.
+   *
+   * @param dependency The {@code ComponentDependency}.
+   * @param artifactHandler The {@code ArtifactHandler}.
+   * @return A {@code Artifact} representation of {@code dependency}, qualified
+   *         by {@code artifactHandler}.
+   */
   public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler artifactHandler) {
     return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, artifactHandler);
   }
 
+  /**
+   * Returns a {@code Artifact} representation of {@code dependency}, qualified
+   * by {@code artifactHandler}.
+   *
+   * @param dependency The {@code Dependency}.
+   * @param artifactHandler The {@code ArtifactHandler}.
+   * @return A {@code Artifact} representation of {@code dependency}, qualified
+   *         by {@code artifactHandler}.
+   */
   public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler artifactHandler) {
     return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), artifactHandler);
   }
 
+  /**
+   * Returns the classpath of dependencies for the {@code pluginDescriptor},
+   * relative to {@code localRepository}.
+   *
+   * @param pluginDescriptor The {@code PluginDescriptor}.
+   * @param localRepository The local {@code ArtifactRepository}.
+   * @param artifactHandler The {@code ArtifactHandler}.
+   * @return The classpath of dependencies for the {@code pluginDescriptor},
+   * relative to {@code localRepository}.
+   */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
-    final List<String> classpath = new ArrayList<>();
+    final List<String> classpath = new ArrayList<>(pluginDescriptor.getDependencies().size());
     for (final ComponentDependency dependency : pluginDescriptor.getDependencies())
       classpath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, artifactHandler)));
 
@@ -135,7 +163,7 @@ public final class MojoUtil {
   }
 
   public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository) {
-    final List<String> classpath = new ArrayList<>();
+    final List<String> classpath = new ArrayList<>(project.getExecutionProject().getDependencies().size());
     for (final Dependency dependency : project.getExecutionProject().getDependencies())
       classpath.add(getPathOf(localRepository, dependency));
 
@@ -173,7 +201,7 @@ public final class MojoUtil {
     }
 
     final File[] classpathFiles = new File[classpath.size()];
-    for (int i = 0; i < classpathFiles.length; i++)
+    for (int i = 0; i < classpathFiles.length; ++i)
       classpathFiles[i] = new File(classpath.get(i));
 
     return classpathFiles;

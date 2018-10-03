@@ -56,7 +56,7 @@ public abstract class GeneratorMojo extends BaseMojo {
       return this.destDir;
     }
 
-    public boolean isOverwrite() {
+    public boolean getOverwrite() {
       return this.overwrite;
     }
 
@@ -64,7 +64,7 @@ public abstract class GeneratorMojo extends BaseMojo {
       return sourceInputs.get(name);
     }
 
-    public boolean isFailOnNoOp() {
+    public boolean getFailOnNoOp() {
       return this.failOnNoOp;
     }
   }

@@ -83,7 +83,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
 
   private static void convertToRegex(final List<String> list) {
     if (list != null)
-      for (int i = 0; i < list.size(); i++)
+      for (int i = 0; i < list.size(); ++i)
         list.set(i, list.get(i).replace(".", "\\.").replace("**/", ".*").replace("/", "\\/").replace("*", ".*"));
   }
 
@@ -137,7 +137,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
         }
 
         final URL[] classPathURLs = new URL[classPaths.size()];
-        for (int i = 0; i < classPathURLs.length; i++) {
+        for (int i = 0; i < classPathURLs.length; ++i) {
           final String path = classPaths.get(i);
           classPathURLs[i] = URLs.makeUrlFromPath(path + (path.endsWith(".jar") ? "" : "/"));
         }
