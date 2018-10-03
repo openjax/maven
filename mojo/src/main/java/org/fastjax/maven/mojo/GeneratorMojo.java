@@ -17,30 +17,38 @@
 package org.fastjax.maven.mojo;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.fastjax.net.URLs;
+import org.fastjax.util.Classes;
+import org.fastjax.util.Collections;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {
   protected class Configuration {
     private final File destDir;
     private final boolean overwrite;
-    private final URL[][] resources;
+    private final Map<String,URL[]> sourceInputs;
     private final boolean failOnNoOp;
 
-    public Configuration(final File destDir, final boolean overwrite, final URL[][] resources, final boolean failOnNoOp) {
+    public Configuration(final File destDir, final boolean overwrite, final Map<String,URL[]> sourceInputs, final boolean failOnNoOp) {
       this.destDir = destDir;
       this.overwrite = overwrite;
-      this.resources = resources;
+      this.sourceInputs = sourceInputs;
       this.failOnNoOp = failOnNoOp;
     }
 
@@ -52,8 +60,8 @@ public abstract class GeneratorMojo extends BaseMojo {
       return this.overwrite;
     }
 
-    public URL[] getResources(final int index) {
-      return this.resources[index];
+    public URL[] getSourceInputs(final String name) {
+      return sourceInputs.get(name);
     }
 
     public boolean isFailOnNoOp() {
@@ -68,62 +76,65 @@ public abstract class GeneratorMojo extends BaseMojo {
   @Parameter(defaultValue="${project}", required=true, readonly=true)
   protected MavenProject project;
 
+  @Parameter( defaultValue = "${session}", readonly = true )
+  private MavenSession session;
+
   @Parameter(property="destDir", required=true)
   private File destDir;
 
   @Parameter(property="overwrite")
   private boolean overwrite = true;
 
-  protected abstract List<String>[] getResources();
-
   @Override
   public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
     MojoUtil.assertCreateDir("destination", destDir);
 
-    final List<String>[] resources = getResources();
-    final URL[][] resourceUrls;
-    if (resources == null) {
-      resourceUrls = null;
+    final Field[] sourceInputFields = Classes.getDeclaredFieldsWithAnnotationDeep(getClass(), SourceInput.class);
+    final Map<String,URL[]> sourceInputs;
+    if (sourceInputFields == null || sourceInputFields.length == 0) {
+      sourceInputs = null;
     }
     else {
-      resourceUrls = new URL[resources.length][];
+      sourceInputs = new HashMap<>();
       try {
-        final ResourceLabel resourceLabel = getClass().getDeclaredMethod("getResources").getAnnotation(ResourceLabel.class);
-        if (resourceLabel == null)
-          throw new MojoFailureException("getResources() is missing @" + ResourceLabel.class.getSimpleName() + " annotation");
+        for (int i = 0; i < sourceInputFields.length; ++i) {
+          final Field sourceInputField = sourceInputFields[i];
+          if (!List.class.isAssignableFrom(sourceInputField.getType()))
+            throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field with type that extends " + List.class.getName() + ": " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 
-        if (resourceLabel.label().length != resources.length)
-          throw new MojoFailureException("@" + ResourceLabel.class.getSimpleName() + " annotation must have the same length 'label' array as number of resources");
+          final Map<String,Object> parameterValues = AnnotationUtil.getAnnotationParameters(sourceInputField, Parameter.class);
+          getLog().warn(Collections.toString(Arrays.asList(sourceInputField.getDeclaredAnnotations()), "\n"));
+          if (parameterValues == null)
+            throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 
-        if (resourceLabel.nonEmpty().length != resources.length)
-          throw new MojoFailureException("@" + ResourceLabel.class.getSimpleName() + " annotation must have the same length 'required' array as number of resources");
-
-        for (int i = 0; i < resources.length; i++) {
-          final List<String> resource = resources[i];
-          if (resource == null || resource.size() == 0) {
-            final String resourcesLabel = resourceLabel.label()[i];
-            if (!resourceLabel.nonEmpty()[i])
+          final String propertyName = (String)parameterValues.get("property");
+          sourceInputField.setAccessible(true);
+          final List<?> sourceInput = (List<?>)sourceInputField.get(this);
+          if (sourceInput == null || sourceInput.size() == 0) {
+            final Object required = parameterValues.get("required");
+            if (required == null || !(Boolean)required)
               continue;
 
             if (failOnNoOp)
-              throw new MojoExecutionException("Empty " + resourcesLabel + " (failOnNoOp=true).");
+              throw new MojoExecutionException("Empty " + propertyName + " (failOnNoOp=true).");
 
-            getLog().info("Skipping due to empty " + resourcesLabel + ".");
+            getLog().info("Skipping due to empty " + propertyName + ".");
             return;
           }
 
-          resourceUrls[i] = new URL[resource.size()];
-          final Iterator<String> iterator = resource.iterator();
-          for (int j = 0; j < 10 && iterator.hasNext(); j++)
-            resourceUrls[i][j] = buildURL(project.getBasedir().getAbsoluteFile(), iterator.next());
+          final URL[] sourceInputUrls = new URL[sourceInput.size()];
+          sourceInputs.put(propertyName, sourceInputUrls);
+          final Iterator<?> iterator = sourceInput.iterator();
+          for (int j = 0; iterator.hasNext(); ++j)
+            sourceInputUrls[j] = buildURL(project.getBasedir().getAbsoluteFile(), String.valueOf(iterator.next()));
         }
       }
-      catch (final MalformedURLException | NoSuchMethodException e) {
+      catch (final IllegalAccessException | IOException e) {
         throw new MojoFailureException(null, e);
       }
     }
 
-    execute(new Configuration(destDir, overwrite, resourceUrls, failOnNoOp));
+    execute(new Configuration(destDir, overwrite, sourceInputs, failOnNoOp));
 
     if (isInTestPhase())
       project.addTestCompileSourceRoot(destDir.getAbsolutePath());

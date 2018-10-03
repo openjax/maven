@@ -21,9 +21,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD})
+/**
+ * Annotation that declares a field is a source input property. This annotation
+ * can only be used on fields that also have the
+ * {@link org.apache.maven.plugins.annotations.Parameter} annotation.
+ */
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ResourceLabel {
-  String[] label();
-  boolean[] nonEmpty();
+public @interface SourceInput {
 }

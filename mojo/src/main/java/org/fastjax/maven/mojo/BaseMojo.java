@@ -25,6 +25,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name="base")
 public abstract class BaseMojo extends AbstractMojo {
+  @Parameter(defaultValue="${mojoExecution}", required=true, readonly=true)
+  protected MojoExecution execution;
+
   @Parameter(property="failOnNoOp")
   private boolean failOnNoOp = true;
 
@@ -33,9 +36,6 @@ public abstract class BaseMojo extends AbstractMojo {
 
   @Parameter(property="skip")
   private boolean skip = false;
-
-  @Parameter(defaultValue="${mojoExecution}", required=true, readonly=true)
-  protected MojoExecution execution;
 
   private Boolean inTestPhase;
 

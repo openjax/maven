@@ -40,8 +40,17 @@ import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.fastjax.net.URLs;
 
 public final class MojoUtil {
+  /**
+   * Returns the {@code PluginExecution} in the {@code mojoExecution}, if a
+   * plugin is currently being executed.
+   *
+   * @param mojoExecution The {@code MojoExecution}.
+   * @return The {@code PluginExecution} in the {@code mojoExecution}, if a
+   *         plugin is currently being executed.
+   */
   public static PluginExecution getPluginExecution(final MojoExecution mojoExecution) {
     final Plugin plugin = mojoExecution.getPlugin();
+    plugin.flushExecutionMap();
     for (final PluginExecution pluginExecution : plugin.getExecutions())
       if (pluginExecution.getId().equals(mojoExecution.getExecutionId()))
         return pluginExecution;
@@ -49,15 +58,36 @@ public final class MojoUtil {
     return null;
   }
 
+  /**
+   * Returns {@code true} if {@code execution} is in a lifecycle phase, and the
+   * name of the lifecycle phase contains "test".
+   *
+   * @param execution The {@code MojoExecution}.
+   * @return {@code true} if {@code execution} is in a lifecycle phase, and the
+   * name of the lifecycle phase contains "test".
+   */
+  public static boolean isInTestPhase(final MojoExecution execution) {
+    return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
+  }
+
+  /**
+   * Returns {@code true} if the mojo should skip execution due to the
+   * {@code -Dmaven.test.skip} property. If the {@code -Dmaven.test.skip}
+   * property is present, this method will return {@code true} when the phase
+   * name of mojo or plugin {@code execution} contains the string "test".
+   *
+   * @param execution The {@code MojoExecution}.
+   * @param mavenTestSkip The {@code -Dmaven.test.skip} property.
+   * @return {@code true} if the mojo should skip execution due to the
+   *         {@code -Dmaven.test.skip} property.
+   */
   public static boolean shouldSkip(final MojoExecution execution, final boolean mavenTestSkip) {
     if (!mavenTestSkip)
       return false;
 
-    if (execution != null && execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test"))
+    if (execution != null && isInTestPhase(execution))
       return true;
 
-    final Plugin plugin = execution.getPlugin();
-    plugin.flushExecutionMap();
     final PluginExecution pluginExecution = getPluginExecution(execution);
     return pluginExecution != null && pluginExecution.getPhase() != null && pluginExecution.getPhase().contains("test");
   }
@@ -71,13 +101,20 @@ public final class MojoUtil {
   }
 
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
-    final List<String> classPath = new ArrayList<>();
+    final List<String> classpath = new ArrayList<>();
     for (final ComponentDependency dependency : pluginDescriptor.getDependencies())
-      classPath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, artifactHandler)));
+      classpath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, artifactHandler)));
 
-    return classPath;
+    return classpath;
   }
 
+  /**
+   * Returns the filesystem path of the {@code dependency} located in the {@code localRepository}.
+   *
+   * @param localRepository The local repository reference.
+   * @param dependency The dependency.
+   * @return The filesystem path of the {@code dependency} located in the {@code localRepository}.
+   */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
     final StringBuilder builder = new StringBuilder();
     builder.append(localRepository.getBasedir());
@@ -98,17 +135,24 @@ public final class MojoUtil {
   }
 
   public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository) {
-    final List<String> classPath = new ArrayList<>();
+    final List<String> classpath = new ArrayList<>();
     for (final Dependency dependency : project.getExecutionProject().getDependencies())
-      classPath.add(getPathOf(localRepository, dependency));
+      classpath.add(getPathOf(localRepository, dependency));
 
-    return classPath;
+    return classpath;
   }
 
-  public static boolean isInTestPhase(final MojoExecution execution) {
-    return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
-  }
-
+  /**
+   * Creates the directory specified by the {@code dir} parameter, including any
+   * necessary but nonexistent parent directories.
+   *
+   * @param name The label name to refer to in case a
+   *          {@code MojoFailureException} is thrown.
+   * @param dir The directory path to create.
+   * @throws MojoFailureException If {@code dir} points to an existing path that
+   *           is a file, or {@code dir} or its necessary but nonexistent parent
+   *           directories could not be created.
+   */
   public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
     if (dir.exists()) {
       if (dir.isFile())
@@ -139,7 +183,7 @@ public final class MojoUtil {
 
   public static String getRenamedFileName(final URL url, final String rename) throws MojoExecutionException {
     if (rename == null)
-      return URLs.getName(url);;
+      return URLs.getName(url);
 
     final Matcher matcher = replacePattern.matcher(rename);
     if (!matcher.matches())

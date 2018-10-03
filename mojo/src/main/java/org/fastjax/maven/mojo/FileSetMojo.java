@@ -116,7 +116,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
   @Parameter(property="resources")
   private List<String> resources;
 
-  @Parameter(defaultValue="${localRepository}")
+  @Parameter(defaultValue="${localRepository}", readonly=true)
   private ArtifactRepository localRepository;
 
   @Override
