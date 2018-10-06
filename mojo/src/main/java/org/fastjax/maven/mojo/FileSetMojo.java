@@ -17,14 +17,16 @@
 package org.fastjax.maven.mojo;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -37,35 +39,41 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.fastjax.io.Files;
 import org.fastjax.net.URLs;
 
 @Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
-  private static LinkedHashSet<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws MalformedURLException {
+  private static LinkedHashSet<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws IOException {
     final LinkedHashSet<URL> urls = new LinkedHashSet<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
-      final List<File> xmlFiles = Files.listAll(dir, FileSetMojo.filter(project.getBasedir(), fileSet));
-      if (xmlFiles != null)
-        for (final File file : xmlFiles)
-          urls.add(file.toURI().toURL());
+      if (dir.exists()) {
+        Files.walk(dir.toPath()).filter(FileSetMojo.filter(project.getBasedir(), fileSet)).forEach(p -> {
+          try {
+            urls.add(p.toUri().toURL());
+          }
+          catch (final MalformedURLException e) {
+            throw new IllegalStateException(e);
+          }
+        });
+      }
     }
 
     return urls;
   }
 
-  private static FileFilter filter(final File dir, final FileSetMojo fileSet) {
-    return new FileFilter() {
+  private static Predicate<Path> filter(final File dir, final FileSetMojo fileSet) {
+    return new Predicate<Path>() {
       @Override
-      public boolean accept(final File pathname) {
-        if (!pathname.isFile())
+      public boolean test(final Path t) {
+        final File file = t.toFile();
+        if (!file.isFile())
           return false;
 
         if (fileSet == null)
-          return pathname.getName().endsWith(".xml") || pathname.getName().endsWith(".xsd") || pathname.getName().endsWith(".xsl");
+          return file.getName().endsWith(".xml") || file.getName().endsWith(".xsd") || file.getName().endsWith(".xsl");
 
-        return filter(dir, pathname, fileSet.getIncludes()) && !filter(dir, pathname, fileSet.getExcludes());
+        return filter(dir, file, fileSet.getIncludes()) && !filter(dir, file, fileSet.getExcludes());
       }
     };
   }

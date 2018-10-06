@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -75,9 +74,6 @@ public abstract class GeneratorMojo extends BaseMojo {
 
   @Parameter(defaultValue="${project}", required=true, readonly=true)
   protected MavenProject project;
-
-  @Parameter( defaultValue = "${session}", readonly = true )
-  private MavenSession session;
 
   @Parameter(property="destDir", required=true)
   private File destDir;
