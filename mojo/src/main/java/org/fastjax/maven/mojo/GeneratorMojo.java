@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.fastjax.net.URLs;
 import org.fastjax.util.Classes;
-import org.fastjax.util.Collections;
+import org.fastjax.util.FastCollections;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {
@@ -99,7 +99,7 @@ public abstract class GeneratorMojo extends BaseMojo {
             throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field with type that extends " + List.class.getName() + ": " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 
           final Map<String,Object> parameterValues = AnnotationUtil.getAnnotationParameters(sourceInputField, Parameter.class);
-          getLog().warn(Collections.toString(Arrays.asList(sourceInputField.getDeclaredAnnotations()), "\n"));
+          getLog().warn(FastCollections.toString(Arrays.asList(sourceInputField.getDeclaredAnnotations()), "\n"));
           if (parameterValues == null)
             throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 
