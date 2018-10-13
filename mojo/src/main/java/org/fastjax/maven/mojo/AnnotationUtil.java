@@ -34,8 +34,8 @@ import org.objectweb.asm.tree.FieldNode;
 public final class AnnotationUtil {
   /**
    * Returns a map of parameters for {@code annotationType} on {@code field},
-   * regardless of the annotation's retention spec. This method returns
-   * {@code null} if the {@code annotationType} is not found on {@code field}.
+   * regardless of the annotation's retention spec. This method returns null if
+   * the {@code annotationType} is not found on {@code field}.
    *
    * @param field The field.
    * @param annotationType The annotation type.
