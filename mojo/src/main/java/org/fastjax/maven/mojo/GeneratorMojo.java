@@ -35,6 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.fastjax.net.URLs;
 import org.fastjax.util.Classes;
 import org.fastjax.util.FastCollections;
+import org.fastjax.util.Paths;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {
@@ -69,7 +70,7 @@ public abstract class GeneratorMojo extends BaseMojo {
   }
 
   private static URL buildURL(final File baseDir, final String path) throws MalformedURLException {
-    return URLs.isAbsolute(path) ? URLs.makeCanonicalUrlFromPath(path) : baseDir == null ? new File(path).toURI().toURL() : new File(baseDir, path).toURI().toURL();
+    return Paths.isAbsolute(path) ? URLs.toCanonicalURL(path) : baseDir != null ? new File(baseDir, path).toURI().toURL() : new File(path).toURI().toURL();
   }
 
   @Parameter(defaultValue="${project}", required=true, readonly=true)

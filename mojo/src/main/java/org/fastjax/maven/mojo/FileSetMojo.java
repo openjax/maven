@@ -39,7 +39,6 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.fastjax.net.URLs;
 
 @Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
@@ -140,14 +139,14 @@ public abstract class FileSetMojo extends ResourcesMojo {
         classPaths.addAll(project.getCompileClasspathElements());
         if (isInTestPhase()) {
           project.getTestResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
-          classPaths.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository));
+          classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
           classPaths.addAll(project.getTestClasspathElements());
         }
 
         final URL[] classPathURLs = new URL[classPaths.size()];
         for (int i = 0; i < classPathURLs.length; ++i) {
           final String path = classPaths.get(i);
-          classPathURLs[i] = URLs.makeUrlFromPath(path + (path.endsWith(".jar") ? "" : "/"));
+          classPathURLs[i] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
         }
 
         try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {

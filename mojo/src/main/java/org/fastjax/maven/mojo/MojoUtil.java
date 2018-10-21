@@ -32,13 +32,16 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.fastjax.net.URLs;
 
+/**
+ * Utility functions that perform a variety of operations related to Maven
+ * projects, executions, plugins, repositories, and dependencies.
+ */
 public final class MojoUtil {
   /**
    * Returns the {@code PluginExecution} in the {@code mojoExecution}, if a
@@ -59,26 +62,27 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns {@code true} if {@code execution} is in a lifecycle phase, and the
-   * name of the lifecycle phase contains "test".
+   * Returns {@code true} if the specified {@link MojoExecution} is in a
+   * lifecycle phase, and the name of the lifecycle phase contains "test".
    *
    * @param execution The {@code MojoExecution}.
-   * @return {@code true} if {@code execution} is in a lifecycle phase, and the
-   * name of the lifecycle phase contains "test".
+   * @return {@code true} if the specified {@link MojoExecution} is in a
+   *         lifecycle phase, and the name of the lifecycle phase contains
+   *         "test".
    */
   public static boolean isInTestPhase(final MojoExecution execution) {
     return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
   }
 
   /**
-   * Returns {@code true} if the mojo should skip execution due to the
+   * Returns {@code true} if a calling MOJO should skip execution due to the
    * {@code -Dmaven.test.skip} property. If the {@code -Dmaven.test.skip}
    * property is present, this method will return {@code true} when the phase
-   * name of mojo or plugin {@code execution} contains the string "test".
+   * name of MOJO or plugin {@code execution} contains the string "test".
    *
    * @param execution The {@code MojoExecution}.
    * @param mavenTestSkip The {@code -Dmaven.test.skip} property.
-   * @return {@code true} if the mojo should skip execution due to the
+   * @return {@code true} if a calling MOJO should skip execution due to the
    *         {@code -Dmaven.test.skip} property.
    */
   public static boolean shouldSkip(final MojoExecution execution, final boolean mavenTestSkip) {
@@ -93,7 +97,7 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns a {@code Artifact} representation of {@code dependency}, qualified
+   * Returns an {@code Artifact} representation of {@code dependency}, qualified
    * by {@code artifactHandler}.
    *
    * @param dependency The {@code ComponentDependency}.
@@ -106,7 +110,7 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns a {@code Artifact} representation of {@code dependency}, qualified
+   * Returns an {@code Artifact} representation of {@code dependency}, qualified
    * by {@code artifactHandler}.
    *
    * @param dependency The {@code Dependency}.
@@ -126,7 +130,7 @@ public final class MojoUtil {
    * @param localRepository The local {@code ArtifactRepository}.
    * @param artifactHandler The {@code ArtifactHandler}.
    * @return The classpath of dependencies for the {@code pluginDescriptor},
-   * relative to {@code localRepository}.
+   *         relative to {@code localRepository}.
    */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
     final List<String> classpath = new ArrayList<>(pluginDescriptor.getDependencies().size());
@@ -137,11 +141,13 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns the filesystem path of the {@code dependency} located in the {@code localRepository}.
+   * Returns the filesystem path of {@code dependency} located in
+   * {@code localRepository}.
    *
    * @param localRepository The local repository reference.
    * @param dependency The dependency.
-   * @return The filesystem path of the {@code dependency} located in the {@code localRepository}.
+   * @return The filesystem path of {@code dependency} located in
+   *         {@code localRepository}.
    */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
     final StringBuilder builder = new StringBuilder();
@@ -162,7 +168,14 @@ public final class MojoUtil {
     return builder.append(".jar").toString();
   }
 
-  public static List<String> getProjectExecutionArtifactClassPath(final MavenProject project, final ArtifactRepository localRepository) {
+  /**
+   * Returns a list of dependency paths in the specified {@link MavenProject}.
+   *
+   * @param project The {@link MavenProject} for which to return the classpath.
+   * @param localRepository The local {@link ArtifactRepository}.
+   * @return A list of dependency paths in the specified {@link MavenProject}.
+   */
+  public static List<String> getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
     final List<String> classpath = new ArrayList<>(project.getExecutionProject().getDependencies().size());
     for (final Dependency dependency : project.getExecutionProject().getDependencies())
       classpath.add(getPathOf(localRepository, dependency));
@@ -191,13 +204,33 @@ public final class MojoUtil {
     }
   }
 
-  public static File[] getExecutionClasspash(final MojoExecution execution, final PluginDescriptor pluginDescriptor, final MavenProject project, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) throws DependencyResolutionRequiredException {
+  /**
+   * Returns a {@link File} array of classpath entries of the specified MOJO
+   * project and execution parameters. This method returns classpath entries of
+   * "compile" and "runtime" scopes. And, if the specified execution is
+   * currently in a test phase, this method also returns classpath entries of
+   * the "test" scope, as well as the path entries of the dependency paths in
+   * the specified {@link MavenProject}.
+   *
+   * @param project The {@link MavenProject}.
+   * @param execution The {@link MojoExecution}.
+   * @param pluginDescriptor The {@link PluginDescriptor}.
+   * @param localRepository The {@link ArtifactRepository} representing the
+   *          local repository.
+   * @param artifactHandler The {@link ArtifactHandler}.
+   * @return A {@link File} array of classpath entries of the specified MOJO
+   *         project and execution parameters.
+   * @throws DependencyResolutionRequiredException If the specified
+   *           {@link MavenProject} does not meet dependency resolution
+   *           requirements.
+   */
+  public static File[] getExecutionClasspash(final MavenProject project, final MojoExecution execution, final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) throws DependencyResolutionRequiredException {
     final List<String> classpath = MojoUtil.getPluginDependencyClassPath(pluginDescriptor, localRepository, artifactHandler);
     classpath.addAll(project.getCompileClasspathElements());
     classpath.addAll(project.getRuntimeClasspathElements());
     if (MojoUtil.isInTestPhase(execution)) {
       classpath.addAll(project.getTestClasspathElements());
-      classpath.addAll(MojoUtil.getProjectExecutionArtifactClassPath(project, localRepository));
+      classpath.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
     }
 
     final File[] classpathFiles = new File[classpath.size()];
@@ -209,13 +242,28 @@ public final class MojoUtil {
 
   private static final Pattern replacePattern = Pattern.compile("^\\/((([^\\/])|(\\\\/))+)\\/((([^\\/])|(\\\\/))+)\\/$");
 
-  public static String getRenamedFileName(final URL url, final String rename) throws MojoExecutionException {
+  /**
+   * Returns the renamed file name in the specified {@link URL} as per the
+   * regular expression specified by {@code rename}, or the original file name
+   * if {@code rename} is null. The RegEx pattern specified by {@code rename}
+   * must be in the form: <blockquote>{@code /<search>/<replace>/}</blockquote>
+   *
+   * @param url The {@link URL} whose file name to rename.
+   * @param rename The RegEx pattern by which the file name of {@code url}
+   *          should be renamed.
+   * @return The renamed file name in the specified {@link URL} as per the
+   *         regular expression specified by {@code rename}, or the original
+   *         file name if {@code rename} is null.
+   * @throws IllegalArgumentException If {@code rename} is malformed.
+   * @see URLs#getName(URL)
+   */
+  public static String getRenamedFileName(final URL url, final String rename) {
     if (rename == null)
       return URLs.getName(url);
 
     final Matcher matcher = replacePattern.matcher(rename);
     if (!matcher.matches())
-      throw new MojoExecutionException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
+      throw new IllegalArgumentException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
 
     return URLs.getName(url).replaceAll(matcher.group(1), matcher.group(5));
   }
