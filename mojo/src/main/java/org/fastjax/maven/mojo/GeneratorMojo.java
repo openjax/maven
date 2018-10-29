@@ -87,7 +87,15 @@ public abstract class GeneratorMojo extends BaseMojo {
   public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
     MojoUtil.assertCreateDir("destination", destDir);
 
-    final Field[] sourceInputFields = Classes.getDeclaredFieldsWithAnnotationDeep(getClass(), SourceInput.class);
+    final Field[] sourceInputFields = Classes.getDeclaredFieldsDeep(getClass(), f -> {
+      try {
+        return AnnotationUtil.getAnnotationParameters(f, SourceInput.class) != null;
+      }
+      catch (final IOException e) {
+        throw new IllegalStateException(e);
+      }
+    });
+
     final Map<String,URL[]> sourceInputs;
     if (sourceInputFields == null || sourceInputFields.length == 0) {
       sourceInputs = null;

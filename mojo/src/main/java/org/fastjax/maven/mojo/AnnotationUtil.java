@@ -34,12 +34,14 @@ import org.objectweb.asm.tree.FieldNode;
 public final class AnnotationUtil {
   /**
    * Returns a map of parameters for {@code annotationType} on {@code field},
-   * regardless of the annotation's retention spec. This method returns null if
-   * the {@code annotationType} is not found on {@code field}.
+   * regardless of the annotation's retention spec. If the
+   * {@code annotationType} is not found on {@code field}, this method returns
+   * {@code null}.
    *
    * @param field The field.
    * @param annotationType The annotation type.
-   * @return A map of parameters for {@code annotationType} on {@code field}.
+   * @return A map of parameters for {@code annotationType} on {@code field}, or
+   *         {@code null} if no such annotation exists.
    * @throws IOException If an I/O error occurs.
    * @throws NullPointerException If {@code field} or {@code annotationType} are
    *           null.
@@ -68,8 +70,9 @@ public final class AnnotationUtil {
       final AnnotationNode annotationNode = (AnnotationNode)annotation;
       if (desc.equals(annotationNode.desc)) {
         final Map<String,Object> parameters = new HashMap<>();
-        for (int i = 0; i < annotationNode.values.size();)
-          parameters.put((String)annotationNode.values.get(i++), annotationNode.values.get(i++));
+        if (annotationNode.values != null)
+          for (int i = 0; i < annotationNode.values.size();)
+            parameters.put((String)annotationNode.values.get(i++), annotationNode.values.get(i++));
 
         return parameters;
       }
