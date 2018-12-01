@@ -42,7 +42,7 @@ public final class AnnotationUtil {
    * @param annotationType The annotation type.
    * @return A map of parameters for {@code annotationType} on {@code field}, or
    *         {@code null} if no such annotation exists.
-   * @throws IOException If an I/O error occurs.
+   * @throws IOException If an I/O error has occurred.
    * @throws NullPointerException If {@code field} or {@code annotationType} are
    *           null.
    */
