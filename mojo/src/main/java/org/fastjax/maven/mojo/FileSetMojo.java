@@ -133,12 +133,12 @@ public abstract class FileSetMojo extends ResourcesMojo {
       if (resources != null && resources.size() > 0) {
         final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
         final List<String> classPaths = new ArrayList<>();
-        project.getResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
+        project.getResources().forEach(r -> classPaths.add(r.getDirectory()));
         classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler));
         classPaths.addAll(project.getRuntimeClasspathElements());
         classPaths.addAll(project.getCompileClasspathElements());
         if (isInTestPhase()) {
-          project.getTestResources().stream().forEach(r -> classPaths.add(r.getDirectory()));
+          project.getTestResources().forEach(r -> classPaths.add(r.getDirectory()));
           classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
           classPaths.addAll(project.getTestClasspathElements());
         }
