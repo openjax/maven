@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 FastJAX
+/* Copyright (c) 2011 OpenJAX
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.fastjax.maven.mojo;
+package org.openjax.classic.maven.mojo;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +32,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.fastjax.io.FastFiles;
-import org.fastjax.net.URLs;
-import org.fastjax.util.Classes;
-import org.fastjax.util.FastCollections;
-import org.fastjax.util.Paths;
+import org.openjax.classic.io.FastFiles;
+import org.openjax.classic.net.URLs;
+import org.openjax.classic.util.Classes;
+import org.openjax.classic.util.FastCollections;
+import org.openjax.classic.util.Paths;
+import org.openjax.classic.util.function.Throwing;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {
@@ -87,15 +88,7 @@ public abstract class GeneratorMojo extends BaseMojo {
   public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
     MojoUtil.assertCreateDir("destination", destDir);
 
-    final Field[] sourceInputFields = Classes.getDeclaredFieldsDeep(getClass(), f -> {
-      try {
-        return AnnotationUtil.getAnnotationParameters(f, SourceInput.class) != null;
-      }
-      catch (final IOException e) {
-        throw new IllegalStateException(e);
-      }
-    });
-
+    final Field[] sourceInputFields = Classes.getDeclaredFieldsDeep(getClass(), Throwing.<Field>rethrow(f -> AnnotationUtil.getAnnotationParameters(f, SourceInput.class) != null));
     final Map<String,URL[]> sourceInputs;
     if (sourceInputFields == null || sourceInputFields.length == 0) {
       sourceInputs = null;

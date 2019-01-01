@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 FastJAX
+/* Copyright (c) 2011 OpenJAX
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.fastjax.maven.mojo;
+package org.openjax.classic.maven.mojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.fastjax.util.FastCollections;
+import org.openjax.classic.util.FastCollections;
 
 @Mojo(name="resources")
 public abstract class ResourcesMojo extends BaseMojo {
