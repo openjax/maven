@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.classic.maven.mojo;
+package org.openjax.standard.maven.mojo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
