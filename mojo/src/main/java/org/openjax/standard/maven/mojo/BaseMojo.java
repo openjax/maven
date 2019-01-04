@@ -58,5 +58,5 @@ public abstract class BaseMojo extends AbstractMojo {
     execute(failOnNoOp);
   }
 
-  public abstract void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(boolean failOnNoOp) throws MojoExecutionException, MojoFailureException;
 }

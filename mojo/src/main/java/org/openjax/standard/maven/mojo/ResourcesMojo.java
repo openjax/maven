@@ -87,5 +87,5 @@ public abstract class ResourcesMojo extends BaseMojo {
     execute(new Configuration(failOnNoOp, mainResources, testResources));
   }
 
-  public abstract void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
 }

@@ -142,5 +142,5 @@ public abstract class GeneratorMojo extends BaseMojo {
       project.addCompileSourceRoot(destDir.getAbsolutePath());
   }
 
-  public abstract void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
 }

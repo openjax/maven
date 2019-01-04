@@ -171,9 +171,9 @@ public abstract class FileSetMojo extends ResourcesMojo {
       execute(urls);
     }
     catch (final DependencyResolutionRequiredException | IOException e) {
-      throw new MojoFailureException(e.getMessage(), e);
+      throw new MojoFailureException(null, e);
     }
   }
 
-  public abstract void execute(final LinkedHashSet<URL> urls) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(LinkedHashSet<URL> urls) throws MojoExecutionException, MojoFailureException;
 }
