@@ -47,15 +47,16 @@ public final class MojoUtil {
    * Returns the {@code PluginExecution} in the {@code mojoExecution}, if a
    * plugin is currently being executed.
    *
-   * @param mojoExecution The {@code MojoExecution}.
+   * @param execution The {@code MojoExecution}.
    * @return The {@code PluginExecution} in the {@code mojoExecution}, if a
    *         plugin is currently being executed.
+   * @throws NullPointerException If {@code execution} is null.
    */
-  public static PluginExecution getPluginExecution(final MojoExecution mojoExecution) {
-    final Plugin plugin = mojoExecution.getPlugin();
+  public static PluginExecution getPluginExecution(final MojoExecution execution) {
+    final Plugin plugin = execution.getPlugin();
     plugin.flushExecutionMap();
     for (final PluginExecution pluginExecution : plugin.getExecutions())
-      if (pluginExecution.getId().equals(mojoExecution.getExecutionId()))
+      if (pluginExecution.getId().equals(execution.getExecutionId()))
         return pluginExecution;
 
     return null;
@@ -69,6 +70,7 @@ public final class MojoUtil {
    * @return {@code true} if the specified {@link MojoExecution} is in a
    *         lifecycle phase, and the name of the lifecycle phase contains
    *         "test".
+   * @throws NullPointerException If {@code execution} is null.
    */
   public static boolean isInTestPhase(final MojoExecution execution) {
     return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
@@ -101,12 +103,14 @@ public final class MojoUtil {
    * by {@code artifactHandler}.
    *
    * @param dependency The {@code ComponentDependency}.
-   * @param artifactHandler The {@code ArtifactHandler}.
+   * @param handler The {@code ArtifactHandler}.
    * @return A {@code Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
+   * @throws NullPointerException If {@code dependency} or {@code handler} is
+   *           null.
    */
-  public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler artifactHandler) {
-    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, artifactHandler);
+  public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler handler) {
+    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, handler);
   }
 
   /**
@@ -114,28 +118,32 @@ public final class MojoUtil {
    * by {@code artifactHandler}.
    *
    * @param dependency The {@code Dependency}.
-   * @param artifactHandler The {@code ArtifactHandler}.
+   * @param handler The {@code ArtifactHandler}.
    * @return A {@code Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
+   * @throws NullPointerException If {@code dependency} or {@code handler} is
+   *           null.
    */
-  public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler artifactHandler) {
-    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), artifactHandler);
+  public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler handler) {
+    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), handler);
   }
 
   /**
    * Returns the classpath of dependencies for the {@code pluginDescriptor},
    * relative to {@code localRepository}.
    *
-   * @param pluginDescriptor The {@code PluginDescriptor}.
+   * @param descriptor The {@code PluginDescriptor}.
    * @param localRepository The local {@code ArtifactRepository}.
-   * @param artifactHandler The {@code ArtifactHandler}.
+   * @param handler The {@code ArtifactHandler}.
    * @return The classpath of dependencies for the {@code pluginDescriptor},
    *         relative to {@code localRepository}.
+   * @throws NullPointerException If {@code descriptor}, {@code localRepository}
+   *           or {@code handler} is null.
    */
-  public static List<String> getPluginDependencyClassPath(final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) {
-    final List<String> classpath = new ArrayList<>(pluginDescriptor.getDependencies().size());
-    for (final ComponentDependency dependency : pluginDescriptor.getDependencies())
-      classpath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, artifactHandler)));
+  public static List<String> getPluginDependencyClassPath(final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) {
+    final List<String> classpath = new ArrayList<>(descriptor.getDependencies().size());
+    for (final ComponentDependency dependency : descriptor.getDependencies())
+      classpath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, handler)));
 
     return classpath;
   }
@@ -148,6 +156,8 @@ public final class MojoUtil {
    * @param dependency The dependency.
    * @return The filesystem path of {@code dependency} located in
    *         {@code localRepository}.
+   * @throws NullPointerException If {@code localRepository} or
+   *           {@code dependency} is null.
    */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
     final StringBuilder builder = new StringBuilder();
@@ -174,6 +184,8 @@ public final class MojoUtil {
    * @param project The {@link MavenProject} for which to return the classpath.
    * @param localRepository The local {@link ArtifactRepository}.
    * @return A list of dependency paths in the specified {@link MavenProject}.
+   * @throws NullPointerException If {@code project} or {@code localRepository}
+   *           is null.
    */
   public static List<String> getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
     final List<String> classpath = new ArrayList<>(project.getExecutionProject().getDependencies().size());
@@ -193,6 +205,7 @@ public final class MojoUtil {
    * @throws MojoFailureException If {@code dir} points to an existing path that
    *           is a file, or {@code dir} or its necessary but nonexistent parent
    *           directories could not be created.
+   * @throws NullPointerException If {@code dir} is null.
    */
   public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
     if (dir.exists()) {
@@ -214,18 +227,21 @@ public final class MojoUtil {
    *
    * @param project The {@link MavenProject}.
    * @param execution The {@link MojoExecution}.
-   * @param pluginDescriptor The {@link PluginDescriptor}.
+   * @param descriptor The {@link PluginDescriptor}.
    * @param localRepository The {@link ArtifactRepository} representing the
    *          local repository.
-   * @param artifactHandler The {@link ArtifactHandler}.
+   * @param handler The {@link ArtifactHandler}.
    * @return A {@link File} array of classpath entries of the specified MOJO
    *         project and execution parameters.
    * @throws DependencyResolutionRequiredException If the specified
    *           {@link MavenProject} does not meet dependency resolution
    *           requirements.
+   * @throws NullPointerException If {@code project}, {@code execution},
+   *           {@code descriptor}, {@code localRepository} or {@code handler} is
+   *           null.
    */
-  public static File[] getExecutionClasspash(final MavenProject project, final MojoExecution execution, final PluginDescriptor pluginDescriptor, final ArtifactRepository localRepository, final ArtifactHandler artifactHandler) throws DependencyResolutionRequiredException {
-    final List<String> classpath = MojoUtil.getPluginDependencyClassPath(pluginDescriptor, localRepository, artifactHandler);
+  public static File[] getExecutionClasspash(final MavenProject project, final MojoExecution execution, final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) throws DependencyResolutionRequiredException {
+    final List<String> classpath = MojoUtil.getPluginDependencyClassPath(descriptor, localRepository, handler);
     classpath.addAll(project.getCompileClasspathElements());
     classpath.addAll(project.getRuntimeClasspathElements());
     if (MojoUtil.isInTestPhase(execution)) {
@@ -255,6 +271,7 @@ public final class MojoUtil {
    *         regular expression specified by {@code rename}, or the original
    *         file name if {@code rename} is null.
    * @throws IllegalArgumentException If {@code rename} is malformed.
+   * @throws NullPointerException If {@code url} is null.
    * @see URLs#getName(URL)
    */
   public static String getRenamedFileName(final URL url, final String rename) {
