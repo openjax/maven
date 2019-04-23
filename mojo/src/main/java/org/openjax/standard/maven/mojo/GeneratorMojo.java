@@ -32,7 +32,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openjax.standard.io.FastFiles;
 import org.openjax.standard.net.URLs;
 import org.openjax.standard.util.Classes;
 import org.openjax.standard.util.FastCollections;
@@ -133,7 +132,7 @@ public abstract class GeneratorMojo extends BaseMojo {
       }
     }
 
-    getLog().info("Writing files to: " + FastFiles.getCwd().toPath().relativize(destDir.getAbsoluteFile().toPath()).toString());
+    getLog().info("Writing files to: " + new File("").getAbsoluteFile().toPath().relativize(destDir.getAbsoluteFile().toPath()).toString());
     execute(new Configuration(destDir, overwrite, sourceInputs, failOnNoOp));
 
     if (isInTestPhase())
