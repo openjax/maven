@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.standard.maven.mojo;
+package org.openjax.ext.maven.mojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openjax.standard.util.FastCollections;
+import org.openjax.ext.util.FastCollections;
 
 @Mojo(name="resources")
 public abstract class ResourcesMojo extends BaseMojo {

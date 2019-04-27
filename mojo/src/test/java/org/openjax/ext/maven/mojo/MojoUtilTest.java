@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.standard.maven.mojo;
+package org.openjax.ext.maven.mojo;
 
 import static org.junit.Assert.*;
 
