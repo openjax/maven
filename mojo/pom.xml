@@ -25,7 +25,10 @@
     <version>0.3.5-SNAPSHOT</version>
   </parent>
   <artifactId>mojo</artifactId>
-  <name>${project.groupId}:${project.artifactId}</name>
+  <name>OpenJAX Extensions Maven Mojo</name>
+  <description>
+    A set of utilities and convenience patterns that help developers implement Apache Maven Plugins.
+  </description>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
