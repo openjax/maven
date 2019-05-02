@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.ext.maven.mojo;
+package org.openjax.maven.mojo;
 
 import java.io.File;
 import java.net.URL;
@@ -36,7 +36,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
-import org.openjax.ext.net.URLs;
+import org.openjax.net.URLs;
 
 /**
  * Utility functions that perform a variety of operations related to Maven

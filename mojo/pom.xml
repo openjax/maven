@@ -20,12 +20,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.openjax.ext.maven</groupId>
+    <groupId>org.openjax.maven</groupId>
     <artifactId>maven</artifactId>
     <version>0.3.5-SNAPSHOT</version>
   </parent>
   <artifactId>mojo</artifactId>
-  <name>OpenJAX Extensions Maven Mojo</name>
+  <name>OpenJAX Maven Mojo</name>
   <description>
     A set of utilities and convenience patterns that help developers implement Apache Maven Plugins.
   </description>
@@ -48,7 +48,7 @@
       <version>3.6.1</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.ext</groupId>
+      <groupId>org.openjax</groupId>
       <artifactId>net</artifactId>
       <version>0.5.0-SNAPSHOT</version>
     </dependency>

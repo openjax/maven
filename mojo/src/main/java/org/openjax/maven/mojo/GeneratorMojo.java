@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.ext.maven.mojo;
+package org.openjax.maven.mojo;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +32,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openjax.ext.net.URLs;
-import org.openjax.ext.util.Classes;
-import org.openjax.ext.util.FastCollections;
-import org.openjax.ext.util.Paths;
-import org.openjax.ext.util.function.Throwing;
+import org.openjax.net.URLs;
+import org.openjax.util.Classes;
+import org.openjax.util.FastCollections;
+import org.openjax.util.Paths;
+import org.openjax.util.function.Throwing;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {

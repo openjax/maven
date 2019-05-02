@@ -20,15 +20,15 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.openjax.ext</groupId>
-    <artifactId>ext</artifactId>
-    <version>1.11.15-SNAPSHOT</version>
+    <groupId>org.openjax</groupId>
+    <artifactId>openjax</artifactId>
+    <version>2.5.3-SNAPSHOT</version>
   </parent>
-  <groupId>org.openjax.ext.maven</groupId>
+  <groupId>org.openjax.maven</groupId>
   <artifactId>maven</artifactId>
   <version>0.3.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenJAX Extensions Maven</name>
+  <name>OpenJAX Maven</name>
   <description>
     A set of utilities and convenience patterns that help developers work with Apache Maven.
   </description>

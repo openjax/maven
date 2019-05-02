@@ -14,21 +14,20 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.ext.maven.mojo;
+package org.openjax.maven.mojo;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static org.junit.Assert.*;
 
-/**
- * Annotation that declares a field is a source input property. This annotation
- * can only be used on fields that also have the
- * {@link org.apache.maven.plugins.annotations.Parameter} annotation.
- */
-@Inherited
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.CLASS)
-public @interface SourceInput {
+import org.junit.Test;
+
+public class MojoUtilTest {
+  @Test
+  public void testGetRenamedFileName() {
+    try {
+      MojoUtil.getRenamedFileName(null, null);
+      fail("Expected NullPointerException");
+    }
+    catch (final NullPointerException e) {
+    }
+  }
 }
