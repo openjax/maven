@@ -36,7 +36,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
-import org.openjax.net.URLs;
+import org.libj.net.URLs;
 
 /**
  * Utility functions that perform a variety of operations related to Maven

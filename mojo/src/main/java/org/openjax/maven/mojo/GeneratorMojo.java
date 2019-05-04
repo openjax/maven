@@ -32,11 +32,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openjax.net.URLs;
-import org.openjax.util.Classes;
-import org.openjax.util.FastCollections;
-import org.openjax.util.Paths;
-import org.openjax.util.function.Throwing;
+import org.libj.net.URLs;
+import org.libj.util.Classes;
+import org.libj.util.FastCollections;
+import org.libj.util.Paths;
+import org.libj.util.function.Throwing;
 
 @Mojo(name="generator")
 public abstract class GeneratorMojo extends BaseMojo {

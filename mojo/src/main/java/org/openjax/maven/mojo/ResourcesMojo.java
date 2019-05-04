@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openjax.util.FastCollections;
+import org.libj.util.FastCollections;
 
 @Mojo(name="resources")
 public abstract class ResourcesMojo extends BaseMojo {
