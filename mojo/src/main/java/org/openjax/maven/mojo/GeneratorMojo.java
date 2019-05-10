@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.libj.net.URLs;
 import org.libj.util.Classes;
-import org.libj.util.FastCollections;
+import org.libj.util.CollectionUtil;
 import org.libj.util.Paths;
 import org.libj.util.function.Throwing;
 
@@ -101,7 +101,7 @@ public abstract class GeneratorMojo extends BaseMojo {
             throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field with type that extends " + List.class.getName() + ": " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 
           final Map<String,Object> parameterValues = AnnotationUtil.getAnnotationParameters(sourceInputField, Parameter.class);
-          getLog().warn(FastCollections.toString(Arrays.asList(sourceInputField.getDeclaredAnnotations()), "\n"));
+          getLog().warn(CollectionUtil.toString(Arrays.asList(sourceInputField.getDeclaredAnnotations()), "\n"));
           if (parameterValues == null)
             throw new MojoFailureException("@" + SourceInput.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + sourceInputField.getDeclaringClass().getName() + "#" + sourceInputField.getName());
 

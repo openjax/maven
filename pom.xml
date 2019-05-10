@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>OpenJAX Maven</name>
   <description>
-    A set of utilities and convenience patterns that help developers work with Apache Maven.
+    Utilities and convenient patterns for Apache Maven.
   </description>
   <modules>
     <module>mojo</module>

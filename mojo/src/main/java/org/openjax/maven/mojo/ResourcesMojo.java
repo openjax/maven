@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.libj.util.FastCollections;
+import org.libj.util.CollectionUtil;
 
 @Mojo(name="resources")
 public abstract class ResourcesMojo extends BaseMojo {
@@ -54,7 +54,7 @@ public abstract class ResourcesMojo extends BaseMojo {
     }
 
     public List<Resource> getResources() {
-      return resources == null ? FastCollections.concat(new ArrayList<Resource>(), mainResources, testResources) : resources;
+      return resources == null ? CollectionUtil.concat(new ArrayList<Resource>(), mainResources, testResources) : resources;
     }
   }
 
