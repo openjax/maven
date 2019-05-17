@@ -24,25 +24,23 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.libj.util.CollectionUtil;
 
 @Mojo(name="resources")
-public abstract class ResourcesMojo extends BaseMojo {
-  protected class Configuration {
-    private final boolean failOnNoOp;
+public abstract class ResourcesMojo extends FilterMojo {
+  public class Configuration extends FilterMojo.Configuration {
     private final List<Resource> mainResources;
     private final List<Resource> testResources;
     private List<Resource> resources;
 
-    public Configuration(final boolean failOnNoOp, final List<Resource> mainResources, final List<Resource> testResources) {
-      this.failOnNoOp = failOnNoOp;
-      this.mainResources = mainResources;
-      this.testResources = testResources;
+    public Configuration(final Configuration configuration) {
+      this(configuration, configuration.mainResources, configuration.testResources);
     }
 
-    public boolean isFailOnNoOp() {
-      return this.failOnNoOp;
+    private Configuration(final FilterMojo.Configuration configuration, final List<Resource> mainResources, final List<Resource> testResources) {
+      super(configuration);
+      this.mainResources = mainResources;
+      this.testResources = testResources;
     }
 
     public List<Resource> getMainResources() {
@@ -64,11 +62,8 @@ public abstract class ResourcesMojo extends BaseMojo {
   @Parameter(defaultValue="${project.testResources}", required=true, readonly=true)
   private List<Resource> testResources;
 
-  @Parameter(defaultValue="${project}", required=true, readonly=true)
-  protected MavenProject project;
-
   @Override
-  public final void execute(final boolean failOnNoOp) throws MojoExecutionException, MojoFailureException {
+  public final void execute(final FilterMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     final List<Resource> projectResources = new ArrayList<>();
     if (this.mainResources != null)
       projectResources.addAll(mainResources);
@@ -77,14 +72,14 @@ public abstract class ResourcesMojo extends BaseMojo {
       projectResources.addAll(testResources);
 
     if (mainResources.size() == 0 && testResources.size() == 0) {
-      if (failOnNoOp)
+      if (configuration.getFailOnNoOp())
         throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true).");
 
       getLog().info("Skipping due to empty resources.");
       return;
     }
 
-    execute(new Configuration(failOnNoOp, mainResources, testResources));
+    execute(new Configuration(configuration, mainResources, testResources));
   }
 
   public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;

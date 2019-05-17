@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 OpenJAX
+/* Copyright (c) 2019 OpenJAX
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,20 +16,13 @@
 
 package org.openjax.maven.mojo;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Annotation that declares a field is a source input property. This annotation
- * can only be used on fields that also have the
- * {@link org.apache.maven.plugins.annotations.Parameter} annotation.
+ * Enum representing the filter type for the {@link FilterParameter}.
+ *
+ * @see FilterMojo
  */
-@Inherited
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.CLASS)
-public @interface FilterParameter {
-  FilterType value();
+public enum FilterType {
+  FILE,
+  RESOURCE,
+  URL
 }

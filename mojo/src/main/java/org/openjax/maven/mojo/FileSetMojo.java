@@ -20,30 +20,26 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 @Mojo(name="fileset")
 public abstract class FileSetMojo extends ResourcesMojo {
-  private static LinkedHashSet<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws IOException {
-    final LinkedHashSet<URL> urls = new LinkedHashSet<>();
+  private static List<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws IOException {
+    final List<URL> urls = new ArrayList<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
@@ -62,18 +58,12 @@ public abstract class FileSetMojo extends ResourcesMojo {
   }
 
   private static Predicate<Path> filter(final File dir, final FileSetMojo fileSet) {
-    return new Predicate<Path>() {
-      @Override
-      public boolean test(final Path t) {
-        final File file = t.toFile();
-        if (!file.isFile())
-          return false;
+    return t -> {
+      final File file = t.toFile();
+      if (!file.isFile())
+        return false;
 
-        if (fileSet == null)
-          return file.getName().endsWith(".xml") || file.getName().endsWith(".xsd") || file.getName().endsWith(".xsl");
-
-        return filter(dir, file, fileSet.getIncludes()) && !filter(dir, file, fileSet.getExcludes());
-      }
+      return filter(dir, file, fileSet.getIncludes()) && !filter(dir, file, fileSet.getExcludes());
     };
   }
 
@@ -94,6 +84,35 @@ public abstract class FileSetMojo extends ResourcesMojo {
         list.set(i, list.get(i).replace(".", "\\.").replace("**/", ".*").replace("/", "\\/").replace("*", ".*"));
   }
 
+  public class Configuration extends ResourcesMojo.Configuration {
+    private final List<URL> fileSets;
+    private final List<String> includes;
+    private final List<String> excludes;
+
+    public Configuration(final Configuration configuration) {
+      this(configuration, configuration.fileSets, configuration.includes, configuration.excludes);
+    }
+
+    private Configuration(final ResourcesMojo.Configuration configuration, final List<URL> fileSets, final List<String> includes, final List<String> excludes) {
+      super(configuration);
+      this.fileSets = Objects.requireNonNull(fileSets);
+      this.includes = includes;
+      this.excludes = excludes;
+    }
+
+    public List<URL> getFileSets() {
+      return this.fileSets;
+    }
+
+    public List<String> getIncludes() {
+      return this.includes;
+    }
+
+    public List<String> getExcludes() {
+      return this.excludes;
+    }
+  }
+
   private boolean converted = false;
 
   private void convert() {
@@ -107,7 +126,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
   @Parameter(property="includes")
   private List<String> includes;
 
-  public List<String> getIncludes() {
+  private List<String> getIncludes() {
     convert();
     return this.includes;
   }
@@ -115,65 +134,30 @@ public abstract class FileSetMojo extends ResourcesMojo {
   @Parameter(property="excludes")
   private List<String> excludes;
 
-  public List<String> getExcludes() {
+  private List<String> getExcludes() {
     convert();
     return this.excludes;
   }
 
-  @Parameter(property="resources")
-  private List<String> resources;
-
-  @Parameter(defaultValue="${localRepository}", readonly=true)
-  private ArtifactRepository localRepository;
-
   @Override
-  public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
+  public final void execute(final ResourcesMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      final LinkedHashSet<URL> urls = getFiles(project, configuration.getResources(), this);
-      if (resources != null && resources.size() > 0) {
-        final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
-        final List<String> classPaths = new ArrayList<>();
-        project.getResources().forEach(r -> classPaths.add(r.getDirectory()));
-        classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler));
-        classPaths.addAll(project.getRuntimeClasspathElements());
-        classPaths.addAll(project.getCompileClasspathElements());
-        if (isInTestPhase()) {
-          project.getTestResources().forEach(r -> classPaths.add(r.getDirectory()));
-          classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
-          classPaths.addAll(project.getTestClasspathElements());
-        }
+      final Map<String,Object> filterParameters = getFilterParameters();
+      final List<URL> fileSets = getFiles(project, configuration.getResources(), this);
+      if (fileSets.size() == 0 && (filterParameters == null || filterParameters.isEmpty())) {
+        if (configuration.getFailOnNoOp())
+          throw new MojoExecutionException("Empty input parameters (failOnNoOp=true)");
 
-        final URL[] classPathURLs = new URL[classPaths.size()];
-        for (int i = 0; i < classPathURLs.length; ++i) {
-          final String path = classPaths.get(i);
-          classPathURLs[i] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
-        }
-
-        try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {
-          for (final String resource : resources) {
-            final URL url = classLoader.getResource(resource);
-            if (url == null)
-              throw new MojoExecutionException("Resource not found in context classLoader: " + resource);
-
-            urls.add(url);
-          }
-        }
-      }
-
-      if (urls.size() == 0) {
-        if (configuration.isFailOnNoOp())
-          throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true).");
-
-        getLog().info("Skipping due to empty resources.");
+        getLog().info("Skipping for empty input parameters.");
         return;
       }
 
-      execute(urls);
+      execute(new Configuration(configuration, fileSets, getIncludes(), getExcludes()));
     }
     catch (final DependencyResolutionRequiredException | IOException e) {
-      throw new MojoFailureException(null, e);
+      throw new MojoFailureException(e.getMessage(), e);
     }
   }
 
-  public abstract void execute(LinkedHashSet<URL> urls) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
 }

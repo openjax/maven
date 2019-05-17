@@ -16,12 +16,14 @@
 
 package org.openjax.maven.mojo;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * An abstract class extending {@link AbstractMojo} that provides the following
@@ -34,18 +36,43 @@ import org.apache.maven.plugins.annotations.Parameter;
  * false.</li>
  * </ul>
  */
-@Mojo(name = "base")
+@Mojo(name="base")
 public abstract class BaseMojo extends AbstractMojo {
-  @Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
+  public class Configuration {
+    private final boolean failOnNoOp;
+
+    public Configuration(final Configuration configuration) {
+      this.failOnNoOp = configuration.failOnNoOp;
+    }
+
+    private Configuration(final boolean failOnNoOp) {
+      this.failOnNoOp = failOnNoOp;
+    }
+
+    public boolean getFailOnNoOp() {
+      return this.failOnNoOp;
+    }
+  }
+
+  @Parameter(defaultValue="${mojoExecution}", required=true, readonly=true)
   protected MojoExecution execution;
 
-  @Parameter(property = "failOnNoOp")
+  @Parameter(defaultValue="${session}", readonly=true, required=true)
+  protected MavenSession session;
+
+  @Parameter(defaultValue="${project}", readonly=true, required=true)
+  protected MavenProject project;
+
+  @Parameter(property="failOnNoOp")
   private boolean failOnNoOp = true;
 
-  @Parameter(property = "maven.test.skip")
+  @Parameter(property="maven.test.skip")
   private boolean mavenTestSkip = false;
 
-  @Parameter(property = "skip")
+  @Parameter(property="skipTests")
+  private boolean skipTests = false;
+
+  @Parameter(property="skip")
   private boolean skip = false;
 
   private Boolean inTestPhase;
@@ -65,12 +92,12 @@ public abstract class BaseMojo extends AbstractMojo {
       return;
     }
 
-    if (MojoUtil.shouldSkip(execution, mavenTestSkip)) {
-      getLog().info("Tests are skipped (maven.test.skip=true)");
+    if (MojoUtil.shouldSkip(execution, mavenTestSkip | skipTests)) {
+      getLog().info("Tests are skipped (" + (mavenTestSkip ? "maven.test.skip" : "skipTests") + "=true)");
       return;
     }
 
-    execute(failOnNoOp);
+    execute(new Configuration(failOnNoOp));
   }
 
   /**
@@ -79,12 +106,12 @@ public abstract class BaseMojo extends AbstractMojo {
    * This is the main trigger for the {@code Mojo} inside the {@code Maven}
    * system, and allows the {@code Mojo} to communicate errors.
    *
-   * @param failOnNoOp Whether the {@code Mojo} is configured to fail on no-op.
+   * @param configuration The {@code Configuration}.
    * @throws MojoExecutionException If an unexpected problem occurs. Throwing
    *           this exception causes a "BUILD ERROR" message to be displayed.
    * @throws MojoFailureException If an expected problem (such as a compilation
    *           failure) occurs. Throwing this exception causes a "BUILD FAILURE"
    *           message to be displayed.
    */
-  public abstract void execute(boolean failOnNoOp) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
 }
