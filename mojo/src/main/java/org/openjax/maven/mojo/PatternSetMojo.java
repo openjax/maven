@@ -36,14 +36,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name="fileset")
-public abstract class FileSetMojo extends ResourcesMojo {
-  private static List<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final FileSetMojo fileSet) throws IOException {
+@Mojo(name="patternset")
+public abstract class PatternSetMojo extends ResourcesMojo {
+  private static List<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
     final List<URL> urls = new ArrayList<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
-        Files.walk(dir.toPath()).filter(FileSetMojo.filter(project.getBasedir(), fileSet)).forEach(p -> {
+        Files.walk(dir.toPath()).filter(PatternSetMojo.filter(project.getBasedir(), fileSet)).forEach(p -> {
           try {
             urls.add(p.toUri().toURL());
           }
@@ -57,7 +57,7 @@ public abstract class FileSetMojo extends ResourcesMojo {
     return urls;
   }
 
-  private static Predicate<Path> filter(final File dir, final FileSetMojo fileSet) {
+  private static Predicate<Path> filter(final File dir, final PatternSetMojo fileSet) {
     return t -> {
       final File file = t.toFile();
       if (!file.isFile())
@@ -78,10 +78,27 @@ public abstract class FileSetMojo extends ResourcesMojo {
     return false;
   }
 
+  static String convertToRegex(final String pattern) {
+    final String regex = pattern
+      .replace("\\", "\\\\")
+      .replace(".", "\\.")
+      .replace("**\\", "\7\7\7")
+      .replace("**/", "\7\7\7")
+      .replace("\\**", "\7\7\7")
+      .replace("/**", "\7\7\7")
+      .replace("*", "[^\7\\\\]*")
+      .replace("\7\7\7", ".*")
+      .replace("/", "\\/")
+      .replace('\7', '/')
+      .replace('?', '.');
+    final char ch = regex.charAt(regex.length() - 1);
+    return ch == '/' || ch == '\\' ? regex + ".*" : regex;
+  }
+
   private static void convertToRegex(final List<String> list) {
     if (list != null)
       for (int i = 0; i < list.size(); ++i)
-        list.set(i, list.get(i).replace(".", "\\.").replace("**/", ".*").replace("/", "\\/").replace("*", ".*"));
+        list.set(i, convertToRegex(list.get(i)));
   }
 
   public class Configuration extends ResourcesMojo.Configuration {
