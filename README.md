@@ -1,4 +1,4 @@
-# OpenJAX Maven
+# Maven
 
 [![Build Status](https://travis-ci.org/openjax/maven.png)](https://travis-ci.org/openjax/maven)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg)](https://coveralls.io/github/openjax/maven)
