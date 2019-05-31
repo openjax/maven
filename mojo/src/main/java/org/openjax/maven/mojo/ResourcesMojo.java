@@ -73,7 +73,7 @@ public abstract class ResourcesMojo extends FilterMojo {
 
     if (mainResources.size() == 0 && testResources.size() == 0) {
       if (configuration.getFailOnNoOp())
-        throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true).");
+        throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true)");
 
       getLog().info("Skipping due to empty resources.");
       return;
