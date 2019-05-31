@@ -1,9 +1,9 @@
 # Maven
 
-[![Build Status](https://travis-ci.org/openjax/maven.png)](https://travis-ci.org/openjax/maven)
-[![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg)](https://coveralls.io/github/openjax/maven)
-[![Javadocs](https://www.javadoc.io/badge/org.openjax.maven/maven.svg)](https://www.javadoc.io/doc/org.openjax.maven/maven)
-[![Released Version](https://img.shields.io/maven-central/v/org.openjax.maven/maven.svg)](https://mvnrepository.com/artifact/org.openjax.maven/maven)
+[![Build Status](https://travis-ci.org/openjax/maven.svg?1)](https://travis-ci.org/openjax/maven)
+[![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg?1)](https://coveralls.io/github/openjax/maven)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.maven/maven.svg?1)](https://www.javadoc.io/doc/org.openjax.maven/maven)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.maven/maven.svg?1)](https://mvnrepository.com/artifact/org.openjax.maven/maven)
 
 ## Introduction
 
