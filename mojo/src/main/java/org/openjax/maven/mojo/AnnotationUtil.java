@@ -43,6 +43,7 @@ public final class AnnotationUtil {
     return ArrayUtil.contains(PRIMITIVE_TYPES, type);
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private static Object getInstance(final Type type, final Object value) {
     if (isPrimitive(type))
       return value;
