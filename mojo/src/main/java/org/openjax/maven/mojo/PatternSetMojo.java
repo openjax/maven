@@ -82,6 +82,14 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     final String regex = pattern
       .replace("\\", "\\\\")
       .replace(".", "\\.")
+      .replace("(", "\\(")
+      .replace(")", "\\)")
+      .replace("[", "\\[")
+      .replace("]", "\\]")
+      .replace("{", "\\{")
+      .replace("}", "\\}")
+      .replace("$", "\\$")
+      .replace("^", "\\^")
       .replace("**\\", "\7\7\7")
       .replace("**/", "\7\7\7")
       .replace("\\**", "\7\7\7")
@@ -91,6 +99,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
       .replace("/", "\\/")
       .replace('\7', '/')
       .replace('?', '.');
+
     final char ch = regex.charAt(regex.length() - 1);
     return ch == '/' || ch == '\\' ? regex + ".*" : regex;
   }
