@@ -18,11 +18,10 @@ package org.openjax.maven.mojo;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,22 +34,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.libj.util.function.Throwing;
 
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
-  private static List<URL> getFiles(final MavenProject project, final List<Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
-    final List<URL> urls = new ArrayList<>();
+  private static LinkedHashSet<URL> getFiles(final MavenProject project, final LinkedHashSet<Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
+    final LinkedHashSet<URL> urls = new LinkedHashSet<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
-        Files.walk(dir.toPath()).filter(PatternSetMojo.filter(project.getBasedir(), fileSet)).forEach(p -> {
-          try {
-            urls.add(p.toUri().toURL());
-          }
-          catch (final MalformedURLException e) {
-            throw new IllegalStateException(e);
-          }
-        });
+        Files.walk(dir.toPath()).filter(PatternSetMojo.filter(project.getBasedir(), fileSet)).forEach(Throwing.rethrow(p -> {
+          urls.add(p.toUri().toURL());
+        }));
       }
     }
 
@@ -111,30 +106,30 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   public class Configuration extends ResourcesMojo.Configuration {
-    private final List<URL> fileSets;
-    private final List<String> includes;
-    private final List<String> excludes;
+    private final LinkedHashSet<URL> fileSets;
+    private final LinkedHashSet<String> includes;
+    private final LinkedHashSet<String> excludes;
 
     public Configuration(final Configuration configuration) {
       this(configuration, configuration.fileSets, configuration.includes, configuration.excludes);
     }
 
-    private Configuration(final ResourcesMojo.Configuration configuration, final List<URL> fileSets, final List<String> includes, final List<String> excludes) {
+    private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URL> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
       super(configuration);
       this.fileSets = Objects.requireNonNull(fileSets);
       this.includes = includes;
       this.excludes = excludes;
     }
 
-    public List<URL> getFileSets() {
+    public LinkedHashSet<URL> getFileSets() {
       return this.fileSets;
     }
 
-    public List<String> getIncludes() {
+    public LinkedHashSet<String> getIncludes() {
       return this.includes;
     }
 
-    public List<String> getExcludes() {
+    public LinkedHashSet<String> getExcludes() {
       return this.excludes;
     }
   }
@@ -169,7 +164,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   public final void execute(final ResourcesMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
       final Map<String,Object> filterParameters = getFilterParameters();
-      final List<URL> fileSets = getFiles(project, configuration.getResources(), this);
+      final LinkedHashSet<URL> fileSets = getFiles(project, configuration.getResources(), this);
       if (fileSets.size() == 0 && (filterParameters == null || filterParameters.isEmpty())) {
         if (configuration.getFailOnNoOp())
           throw new MojoExecutionException("Empty input parameters (failOnNoOp=true)");
@@ -178,7 +173,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
         return;
       }
 
-      execute(new Configuration(configuration, fileSets, getIncludes(), getExcludes()));
+      execute(new Configuration(configuration, fileSets, getIncludes() == null ? null : new LinkedHashSet<>(getIncludes()), getExcludes() == null ? null : new LinkedHashSet<>(getExcludes())));
     }
     catch (final DependencyResolutionRequiredException | IOException e) {
       throw new MojoFailureException(e.getMessage(), e);

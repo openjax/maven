@@ -140,13 +140,13 @@ public abstract class FilterMojo extends BaseMojo {
         final FilterType filterType = filterParameter.value();
         if (filterType == FilterType.FILE) {
           if (typeArgument != File.class)
-            throw new IllegalArgumentException("Field specified with @" + FilterParameter.class.getSimpleName() + "(" + FilterType.class.getSimpleName() + ".FILE) must be of type " + File.class.getName() + ", but found " + typeArgument);
+            throw new IllegalArgumentException("Field specified with @" + FilterParameter.class.getSimpleName() + "(" + FilterType.class.getSimpleName() + ".FILE) must be of type " + File.class.getName() + " or " + List.class.getName() + "<" + File.class.getName() + ">, but found " + typeArgument);
 
           filteredValue = value;
         }
         else {
           if (typeArgument != String.class)
-            throw new IllegalArgumentException("Field specified with @" + FilterParameter.class.getSimpleName() + "(" + FilterType.class.getSimpleName() + ".URL) must be of type String, but found " + typeArgument);
+            throw new IllegalArgumentException("Field specified with @" + FilterParameter.class.getSimpleName() + "(" + FilterType.class.getSimpleName() + ".URL) must be of type String or " + List.class.getName() + "<String>, but found " + typeArgument);
 
           if (filterType == FilterType.URL) {
             final File baseDir = project.getBasedir().getAbsoluteFile();

@@ -16,7 +16,7 @@
 
 package org.openjax.maven.mojo;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.maven.model.Resource;
@@ -29,30 +29,30 @@ import org.libj.util.CollectionUtil;
 @Mojo(name="resources")
 public abstract class ResourcesMojo extends FilterMojo {
   public class Configuration extends FilterMojo.Configuration {
-    private final List<Resource> mainResources;
-    private final List<Resource> testResources;
-    private List<Resource> resources;
+    private final LinkedHashSet<Resource> mainResources;
+    private final LinkedHashSet<Resource> testResources;
+    private LinkedHashSet<Resource> resources;
 
     public Configuration(final Configuration configuration) {
       this(configuration, configuration.mainResources, configuration.testResources);
     }
 
-    private Configuration(final FilterMojo.Configuration configuration, final List<Resource> mainResources, final List<Resource> testResources) {
+    private Configuration(final FilterMojo.Configuration configuration, final LinkedHashSet<Resource> mainResources, final LinkedHashSet<Resource> testResources) {
       super(configuration);
       this.mainResources = mainResources;
       this.testResources = testResources;
     }
 
-    public List<Resource> getMainResources() {
+    public LinkedHashSet<Resource> getMainResources() {
       return this.mainResources;
     }
 
-    public List<Resource> getTestResources() {
+    public LinkedHashSet<Resource> getTestResources() {
       return this.testResources;
     }
 
-    public List<Resource> getResources() {
-      return resources == null ? CollectionUtil.concat(new ArrayList<Resource>(), mainResources, testResources) : resources;
+    public LinkedHashSet<Resource> getResources() {
+      return resources == null ? CollectionUtil.concat(new LinkedHashSet<Resource>(), mainResources, testResources) : resources;
     }
   }
 
@@ -64,13 +64,6 @@ public abstract class ResourcesMojo extends FilterMojo {
 
   @Override
   public final void execute(final FilterMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
-    final List<Resource> projectResources = new ArrayList<>();
-    if (this.mainResources != null)
-      projectResources.addAll(mainResources);
-
-    if (testResources != null)
-      projectResources.addAll(testResources);
-
     if (mainResources.size() == 0 && testResources.size() == 0) {
       if (configuration.getFailOnNoOp())
         throw new MojoExecutionException("Failing due to empty resources (failOnNoOp=true)");
@@ -79,7 +72,7 @@ public abstract class ResourcesMojo extends FilterMojo {
       return;
     }
 
-    execute(new Configuration(configuration, mainResources, testResources));
+    execute(new Configuration(configuration, new LinkedHashSet<>(mainResources), new LinkedHashSet<>(testResources)));
   }
 
   public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
