@@ -37,6 +37,7 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.libj.net.URLs;
+import org.libj.util.Paths;
 
 /**
  * Utility functions that perform a variety of operations related to Maven
@@ -259,6 +260,33 @@ public final class MojoUtil {
   private static final Pattern replacePattern = Pattern.compile("^\\/((([^\\/])|(\\\\/))+)\\/((([^\\/])|(\\\\/))+)\\/$");
 
   /**
+   * Returns the renamed file name in the specified path as per the
+   * regular expression specified by {@code rename}, or the original file name
+   * if {@code rename} is null. The RegEx pattern specified by {@code rename}
+   * must be in the form: <blockquote>{@code /<search>/<replace>/}</blockquote>
+   *
+   * @param path The path whose file name to rename.
+   * @param rename The RegEx pattern by which the file name of {@code path}
+   *          should be renamed.
+   * @return The renamed file name in the specified {@link URL} as per the
+   *         regular expression specified by {@code rename}, or the original
+   *         file name if {@code rename} is null.
+   * @throws IllegalArgumentException If {@code rename} is malformed.
+   * @throws NullPointerException If {@code path} is null.
+   * @see Paths#getName(String)
+   */
+  public static String getRenamedFileName(final String path, final String rename) {
+    if (rename == null)
+      return Paths.getName(path);
+
+    final Matcher matcher = replacePattern.matcher(rename);
+    if (!matcher.matches())
+      throw new IllegalArgumentException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
+
+    return Paths.getName(path).replaceAll(matcher.group(1), matcher.group(5));
+  }
+
+  /**
    * Returns the renamed file name in the specified {@link URL} as per the
    * regular expression specified by {@code rename}, or the original file name
    * if {@code rename} is null. The RegEx pattern specified by {@code rename}
@@ -275,14 +303,7 @@ public final class MojoUtil {
    * @see URLs#getName(URL)
    */
   public static String getRenamedFileName(final URL url, final String rename) {
-    if (rename == null)
-      return URLs.getName(url);
-
-    final Matcher matcher = replacePattern.matcher(rename);
-    if (!matcher.matches())
-      throw new IllegalArgumentException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
-
-    return URLs.getName(url).replaceAll(matcher.group(1), matcher.group(5));
+    return getRenamedFileName(url.toString(), rename);
   }
 
   private MojoUtil() {

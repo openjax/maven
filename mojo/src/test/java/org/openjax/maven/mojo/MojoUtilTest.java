@@ -18,13 +18,22 @@ package org.openjax.maven.mojo;
 
 import static org.junit.Assert.*;
 
+import java.net.URL;
+
 import org.junit.Test;
 
 public class MojoUtilTest {
   @Test
   public void testGetRenamedFileName() {
     try {
-      MojoUtil.getRenamedFileName(null, null);
+      MojoUtil.getRenamedFileName((String)null, null);
+      fail("Expected NullPointerException");
+    }
+    catch (final NullPointerException e) {
+    }
+
+    try {
+      MojoUtil.getRenamedFileName((URL)null, null);
       fail("Expected NullPointerException");
     }
     catch (final NullPointerException e) {
