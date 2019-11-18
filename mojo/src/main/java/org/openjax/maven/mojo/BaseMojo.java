@@ -29,10 +29,10 @@ import org.apache.maven.project.MavenProject;
  * An abstract class extending {@link AbstractMojo} that provides the following
  * convenience parameters:
  * <ul>
- * <li>execution: The {@code MojoExecution}.</li>
- * <li>failOnNoOp: Whether the {@code Mojo} should fail on no-op. Default:
+ * <li>execution: The {@link MojoExecution}.</li>
+ * <li>failOnNoOp: Whether the {@link Mojo} should fail on no-op. Default:
  * true.</li>
- * <li>skip: Whether the {@code Mojo}'s execution should be skipped. Default:
+ * <li>skip: Whether the {@link Mojo}'s execution should be skipped. Default:
  * false.</li>
  * </ul>
  */
@@ -78,6 +78,9 @@ public abstract class BaseMojo extends AbstractMojo {
   private Boolean inTestPhase;
 
   /**
+   * Returns whether the current execution is in a test phase, which includes
+   * any phase whose name contains "test".
+   *
    * @return Whether the current execution is in a test phase, which includes
    *         any phase whose name contains "test".
    */
@@ -101,12 +104,12 @@ public abstract class BaseMojo extends AbstractMojo {
   }
 
   /**
-   * Perform whatever build-process behavior this {@code Mojo} implements.
+   * Perform whatever build-process behavior this {@link Mojo} implements.
    * <p>
-   * This is the main trigger for the {@code Mojo} inside the {@code Maven}
-   * system, and allows the {@code Mojo} to communicate errors.
+   * This is the main trigger for the {@link Mojo} inside the Maven system, and
+   * allows the {@link Mojo} to communicate errors.
    *
-   * @param configuration The {@code Configuration}.
+   * @param configuration The {@link Configuration}.
    * @throws MojoExecutionException If an unexpected problem occurs. Throwing
    *           this exception causes a "BUILD ERROR" message to be displayed.
    * @throws MojoFailureException If an expected problem (such as a compilation

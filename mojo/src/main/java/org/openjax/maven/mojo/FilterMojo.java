@@ -85,7 +85,7 @@ public abstract class FilterMojo extends BaseMojo {
    * @throws MojoFailureException If no fields are found with the
    *           {@link FilterParameter} annotation in the specified class, or if
    *           a field with the {@link FilterParameter} annotation is declared
-   *           with a type other than {@code List}, or if a field with the
+   *           with a type other than {@link List}, or if a field with the
    *           {@link FilterParameter} annotation does not declare the
    *           {@link Parameter} annotation.
    */

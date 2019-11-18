@@ -45,11 +45,11 @@ import org.libj.util.Paths;
  */
 public final class MojoUtil {
   /**
-   * Returns the {@code PluginExecution} in the {@code mojoExecution}, if a
+   * Returns the {@link PluginExecution} in the {@code mojoExecution}, if a
    * plugin is currently being executed.
    *
-   * @param execution The {@code MojoExecution}.
-   * @return The {@code PluginExecution} in the {@code mojoExecution}, if a
+   * @param execution The {@link MojoExecution}.
+   * @return The {@link PluginExecution} in the {@code mojoExecution}, if a
    *         plugin is currently being executed.
    * @throws NullPointerException If {@code execution} is null.
    */
@@ -67,7 +67,7 @@ public final class MojoUtil {
    * Returns {@code true} if the specified {@link MojoExecution} is in a
    * lifecycle phase, and the name of the lifecycle phase contains "test".
    *
-   * @param execution The {@code MojoExecution}.
+   * @param execution The {@link MojoExecution}.
    * @return {@code true} if the specified {@link MojoExecution} is in a
    *         lifecycle phase, and the name of the lifecycle phase contains
    *         "test".
@@ -83,7 +83,7 @@ public final class MojoUtil {
    * property is present, this method will return {@code true} when the phase
    * name of MOJO or plugin {@code execution} contains the string "test".
    *
-   * @param execution The {@code MojoExecution}.
+   * @param execution The {@link MojoExecution}.
    * @param mavenTestSkip The {@code -Dmaven.test.skip} property.
    * @return {@code true} if a calling MOJO should skip execution due to the
    *         {@code -Dmaven.test.skip} property.
@@ -100,12 +100,12 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns an {@code Artifact} representation of {@code dependency}, qualified
+   * Returns an {@link Artifact} representation of {@code dependency}, qualified
    * by {@code artifactHandler}.
    *
-   * @param dependency The {@code ComponentDependency}.
-   * @param handler The {@code ArtifactHandler}.
-   * @return A {@code Artifact} representation of {@code dependency}, qualified
+   * @param dependency The {@link ComponentDependency}.
+   * @param handler The {@link ArtifactHandler}.
+   * @return A {@link Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
    * @throws NullPointerException If {@code dependency} or {@code handler} is
    *           null.
@@ -115,12 +115,12 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns an {@code Artifact} representation of {@code dependency}, qualified
+   * Returns an {@link Artifact} representation of {@code dependency}, qualified
    * by {@code artifactHandler}.
    *
-   * @param dependency The {@code Dependency}.
-   * @param handler The {@code ArtifactHandler}.
-   * @return A {@code Artifact} representation of {@code dependency}, qualified
+   * @param dependency The {@link Dependency}.
+   * @param handler The {@link ArtifactHandler}.
+   * @return A {@link Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
    * @throws NullPointerException If {@code dependency} or {@code handler} is
    *           null.
@@ -133,9 +133,9 @@ public final class MojoUtil {
    * Returns the classpath of dependencies for the {@code pluginDescriptor},
    * relative to {@code localRepository}.
    *
-   * @param descriptor The {@code PluginDescriptor}.
-   * @param localRepository The local {@code ArtifactRepository}.
-   * @param handler The {@code ArtifactHandler}.
+   * @param descriptor The {@link PluginDescriptor}.
+   * @param localRepository The local {@link ArtifactRepository}.
+   * @param handler The {@link ArtifactHandler}.
    * @return The classpath of dependencies for the {@code pluginDescriptor},
    *         relative to {@code localRepository}.
    * @throws NullPointerException If {@code descriptor}, {@code localRepository}
@@ -201,7 +201,7 @@ public final class MojoUtil {
    * necessary but nonexistent parent directories.
    *
    * @param name The label name to refer to in case a
-   *          {@code MojoFailureException} is thrown.
+   *          {@link MojoFailureException} is thrown.
    * @param dir The directory path to create.
    * @throws MojoFailureException If {@code dir} points to an existing path that
    *           is a file, or {@code dir} or its necessary but nonexistent parent
