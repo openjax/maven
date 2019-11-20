@@ -78,7 +78,7 @@ public abstract class BaseMojo extends AbstractMojo {
   private Boolean inTestPhase;
 
   /**
-   * Returns whether the current execution is in a test phase, which includes
+   * Specifies whether the current execution is in a test phase, which includes
    * any phase whose name contains "test".
    *
    * @return Whether the current execution is in a test phase, which includes
