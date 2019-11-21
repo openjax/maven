@@ -43,9 +43,12 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
-        Files.walk(dir.toPath()).filter(PatternSetMojo.filter(project.getBasedir(), fileSet)).forEach(Throwing.rethrow(p -> {
-          urls.add(p.toUri().toURL());
-        }));
+        Files
+          .walk(dir.toPath())
+          .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
+          .forEach(Throwing.rethrow(p -> {
+            urls.add(p.toUri().toURL());
+          }));
       }
     }
 
@@ -53,8 +56,8 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   private static Predicate<Path> filter(final File dir, final PatternSetMojo fileSet) {
-    return t -> {
-      final File file = t.toFile();
+    return path -> {
+      final File file = path.toFile();
       if (!file.isFile())
         return false;
 

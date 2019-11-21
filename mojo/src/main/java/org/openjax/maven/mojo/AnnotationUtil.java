@@ -116,6 +116,7 @@ public final class AnnotationUtil {
    * @throws NullPointerException If {@code field} or {@code annotationType} are
    *           null.
    */
+  @SuppressWarnings("unchecked")
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
     final ClassReader classReader = new ClassReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class"));
     final ClassNode classNode = new ClassNode();
