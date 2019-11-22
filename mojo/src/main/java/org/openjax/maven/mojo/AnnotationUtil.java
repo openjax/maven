@@ -19,10 +19,14 @@ package org.openjax.maven.mojo;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.libj.util.ArrayUtil;
 import org.objectweb.asm.ClassReader;
@@ -30,8 +34,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
-
-import sun.reflect.annotation.AnnotationParser;
 
 /**
  * Utility class providing access to annotation data via bytecode.
@@ -45,10 +47,7 @@ public final class AnnotationUtil {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private static Object getInstance(final Type type, final Object value) {
-    if (isPrimitive(type))
-      return value;
-
-    if (String.class.getName().equals(type.getClassName()))
+    if (isPrimitive(type) || String.class.getName().equals(type.getClassName()))
       return value;
 
     if (Enumeration.class.getName().equals(type.getClassName()))
@@ -116,7 +115,6 @@ public final class AnnotationUtil {
    * @throws NullPointerException If {@code field} or {@code annotationType} are
    *           null.
    */
-  @SuppressWarnings("unchecked")
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
     final ClassReader classReader = new ClassReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class"));
     final ClassNode classNode = new ClassNode();
@@ -127,14 +125,59 @@ public final class AnnotationUtil {
         final String desc = "L" + annotationType.getName().replace('.', '/') + ";";
         final Map<String,Object> invisible = getAnnotationParameters(fieldNode.invisibleAnnotations, desc);
         if (invisible != null)
-          return (T)AnnotationParser.annotationForMap(annotationType, invisible);
+          return annotationForMap(annotationType, invisible);
 
         final Map<String,Object> visible = getAnnotationParameters(fieldNode.visibleAnnotations, desc);
-        return visible == null ? null : (T)AnnotationParser.annotationForMap(annotationType, visible);
+        return visible == null ? null : annotationForMap(annotationType, visible);
       }
     }
 
     return null;
+  }
+
+  /**
+   * Creates a new instance of an annotation of the specified type and provided
+   * member values.
+   *
+   * @param <T> Type parameter of the annotation class.
+   * @param annotationType The annotation type.
+   * @param memberValues The member values.
+   * @return A new instance of an annotation of the specified type and provided
+   *         member values.
+   * @throws IllegalArgumentException If any restrictions on the parameters are
+   *           violated.
+   * @throws SecurityException If a security manager, <em>s</em>, is present and
+   *           any of the following conditions is met:
+   *           <ul>
+   *           <li>the given {@code loader} is {@code null} and the caller's
+   *           class loader is not {@code null} and the invocation of
+   *           {@link SecurityManager#checkPermission s.checkPermission} with
+   *           {@code RuntimePermission("getClassLoader")} permission denies
+   *           access;</li>
+   *           <li>for each proxy interface, {@code intf}, the caller's class
+   *           loader is not the same as or an ancestor of the class loader for
+   *           {@code intf} and invocation of
+   *           {@link SecurityManager#checkPackageAccess s.checkPackageAccess()}
+   *           denies access to {@code intf};</li>
+   *           <li>any of the given proxy interfaces is non-public and the
+   *           caller class is not in the same {@linkplain Package runtime
+   *           package} as the non-public interface and the invocation of
+   *           {@link SecurityManager#checkPermission s.checkPermission} with
+   *           {@code ReflectPermission("newProxyInPackage.{package name}")}
+   *           permission denies access.</li>
+   *           </ul>
+   * @throws NullPointerException If the specified {@code annotationType} or
+   *           {@code memberValues} is null.
+   */
+  @SuppressWarnings("unchecked")
+  static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
+    Objects.requireNonNull(memberValues);
+    return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
+      @Override
+      public Object invoke(final Object proxy, final Method method, final Object[] args) {
+        return memberValues.get(method.getName());
+      }
+    });
   }
 
   private AnnotationUtil() {
