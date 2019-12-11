@@ -72,7 +72,7 @@ public abstract class FilterMojo extends BaseMojo {
    * Filters parameters declared with the {@link FilterParameter} annotation,
    * and replaces each field's value with the filtered value.
    * <p>
-   * <i><b>NOTE:</b> This method is not thread safe.</i>
+   * <b>NOTE:</b> This method is not thread safe.
    *
    * @return A map of parameter name to a list of the filtered parameter values,
    *         or {@code null} if no fields were found with the

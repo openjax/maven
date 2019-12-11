@@ -260,10 +260,14 @@ public final class MojoUtil {
   private static final Pattern replacePattern = Pattern.compile("^\\/((([^\\/])|(\\\\/))+)\\/((([^\\/])|(\\\\/))+)\\/$");
 
   /**
-   * Returns the renamed file name in the specified path as per the
-   * regular expression specified by {@code rename}, or the original file name
-   * if {@code rename} is null. The RegEx pattern specified by {@code rename}
-   * must be in the form: <blockquote>{@code /<search>/<replace>/}</blockquote>
+   * Returns the renamed file name in the specified path as per the regular
+   * expression specified by {@code rename}, or the original file name if
+   * {@code rename} is null. The RegEx pattern specified by {@code rename} must
+   * be in the form:
+   *
+   * <pre>
+   * {@code /<search>/<replace>/}
+   * </pre>
    *
    * @param path The path whose file name to rename.
    * @param rename The RegEx pattern by which the file name of {@code path}
@@ -290,7 +294,11 @@ public final class MojoUtil {
    * Returns the renamed file name in the specified {@link URL} as per the
    * regular expression specified by {@code rename}, or the original file name
    * if {@code rename} is null. The RegEx pattern specified by {@code rename}
-   * must be in the form: <blockquote>{@code /<search>/<replace>/}</blockquote>
+   * must be in the form:
+   *
+   * <pre>
+   * {@code /<search>/<replace>/}
+   * </pre>
    *
    * @param url The {@link URL} whose file name to rename.
    * @param rename The RegEx pattern by which the file name of {@code url}
