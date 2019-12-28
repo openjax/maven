@@ -257,7 +257,7 @@ public final class MojoUtil {
     return classpathFiles;
   }
 
-  private static final Pattern replacePattern = Pattern.compile("^\\/((([^\\/])|(\\\\/))+)\\/((([^\\/])|(\\\\/))+)\\/$");
+  private static final Pattern replacePattern = Pattern.compile("^/((([^/])|(\\\\/))+)/((([^/])|(\\\\/))+)/$");
 
   /**
    * Returns the renamed file name in the specified path as per the regular

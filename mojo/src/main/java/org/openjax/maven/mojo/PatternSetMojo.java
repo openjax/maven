@@ -38,7 +38,7 @@ import org.libj.util.function.Throwing;
 
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
-  private static LinkedHashSet<URL> getFiles(final MavenProject project, final LinkedHashSet<Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
+  private static LinkedHashSet<URL> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
     final LinkedHashSet<URL> urls = new LinkedHashSet<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
@@ -137,7 +137,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     }
   }
 
-  private boolean converted = false;
+  private boolean converted;
 
   private void convert() {
     if (!converted) {

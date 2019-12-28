@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -163,14 +164,17 @@ public abstract class FilterMojo extends BaseMojo {
           }
           else if (filterType == FilterType.RESOURCE) {
             final List<String> classPaths = new ArrayList<>();
-            project.getResources().forEach(r -> classPaths.add(r.getDirectory()));
+            for (final Resource resourse : project.getResources())
+              classPaths.add(resourse.getDirectory());
 
             final ArtifactRepository localRepository = session.getLocalRepository();
             classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)getPluginContext().get("pluginDescriptor"), localRepository, new DefaultArtifactHandler("jar")));
             classPaths.addAll(project.getRuntimeClasspathElements());
             classPaths.addAll(project.getCompileClasspathElements());
             if (isInTestPhase()) {
-              project.getTestResources().forEach(r -> classPaths.add(r.getDirectory()));
+              for (final Resource resourse : project.getTestResources())
+                classPaths.add(resourse.getDirectory());
+
               classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
               classPaths.addAll(project.getTestClasspathElements());
             }
@@ -197,9 +201,9 @@ public abstract class FilterMojo extends BaseMojo {
           else {
             throw new UnsupportedOperationException("Unsupported @" + FilterType.class.getSimpleName() + ": " + filterType);
           }
-
-          nameToInputs.put(parameter.property(), filteredValue);
         }
+
+        nameToInputs.put(parameter.property(), filteredValue);
       }
 
       return filteredParameters = nameToInputs;
@@ -220,5 +224,5 @@ public abstract class FilterMojo extends BaseMojo {
     }
   }
 
-  public abstract void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException;
+  public abstract void execute(Configuration configuration) throws MojoExecutionException, MojoFailureException;
 }

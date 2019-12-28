@@ -38,7 +38,7 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo(name="base")
 public abstract class BaseMojo extends AbstractMojo {
-  public class Configuration {
+  public static class Configuration {
     private final boolean failOnNoOp;
 
     public Configuration(final Configuration configuration) {
@@ -95,7 +95,7 @@ public abstract class BaseMojo extends AbstractMojo {
       return;
     }
 
-    if (MojoUtil.shouldSkip(execution, mavenTestSkip | skipTests)) {
+    if (MojoUtil.shouldSkip(execution, mavenTestSkip || skipTests)) {
       getLog().info("Tests are skipped (" + (mavenTestSkip ? "maven.test.skip" : "skipTests") + "=true)");
       return;
     }

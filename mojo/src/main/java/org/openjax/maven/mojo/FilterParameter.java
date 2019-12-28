@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * {@link org.apache.maven.plugins.annotations.Parameter} annotation.
  */
 @Inherited
-@Target({ElementType.FIELD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface FilterParameter {
   FilterType value();

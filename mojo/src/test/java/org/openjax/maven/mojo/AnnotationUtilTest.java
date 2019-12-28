@@ -31,7 +31,6 @@ import javax.annotation.meta.When;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.openjax.maven.mojo.AnnotationUtil;
 
 @Nullable
 @RegEx(when = When.MAYBE)

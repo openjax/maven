@@ -17,6 +17,7 @@
 package org.openjax.maven.mojo;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -116,7 +117,11 @@ public final class AnnotationUtil {
    *           null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
-    final ClassReader classReader = new ClassReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class"));
+    final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class");
+    if (in == null)
+      throw new IllegalStateException("Unable to locate bytecode for class " + field.getDeclaringClass().getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
+
+    final ClassReader classReader = new ClassReader(in);
     final ClassNode classNode = new ClassNode();
     classReader.accept(classNode, 0);
     for (final Object classField : classNode.fields) {

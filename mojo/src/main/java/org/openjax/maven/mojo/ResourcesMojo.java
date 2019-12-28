@@ -52,7 +52,7 @@ public abstract class ResourcesMojo extends FilterMojo {
     }
 
     public LinkedHashSet<Resource> getResources() {
-      return resources == null ? CollectionUtil.concat(new LinkedHashSet<Resource>(), mainResources, testResources) : resources;
+      return resources == null ? CollectionUtil.concat(new LinkedHashSet<>(), mainResources, testResources) : resources;
     }
   }
 
