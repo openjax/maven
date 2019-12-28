@@ -164,16 +164,16 @@ public abstract class FilterMojo extends BaseMojo {
           }
           else if (filterType == FilterType.RESOURCE) {
             final List<String> classPaths = new ArrayList<>();
-            for (final Resource resourse : project.getResources())
-              classPaths.add(resourse.getDirectory());
+            for (final Resource resource : project.getResources())
+              classPaths.add(resource.getDirectory());
 
             final ArtifactRepository localRepository = session.getLocalRepository();
             classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)getPluginContext().get("pluginDescriptor"), localRepository, new DefaultArtifactHandler("jar")));
             classPaths.addAll(project.getRuntimeClasspathElements());
             classPaths.addAll(project.getCompileClasspathElements());
             if (isInTestPhase()) {
-              for (final Resource resourse : project.getTestResources())
-                classPaths.add(resourse.getDirectory());
+              for (final Resource resource : project.getTestResources())
+                classPaths.add(resource.getDirectory());
 
               classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
               classPaths.addAll(project.getTestClasspathElements());

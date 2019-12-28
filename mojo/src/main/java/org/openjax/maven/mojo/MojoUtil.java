@@ -241,7 +241,7 @@ public final class MojoUtil {
    *           {@code descriptor}, {@code localRepository} or {@code handler} is
    *           null.
    */
-  public static File[] getExecutionClasspash(final MavenProject project, final MojoExecution execution, final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) throws DependencyResolutionRequiredException {
+  public static File[] getExecutionClasspath(final MavenProject project, final MojoExecution execution, final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) throws DependencyResolutionRequiredException {
     final List<String> classpath = MojoUtil.getPluginDependencyClassPath(descriptor, localRepository, handler);
     classpath.addAll(project.getCompileClasspathElements());
     classpath.addAll(project.getRuntimeClasspathElements());
