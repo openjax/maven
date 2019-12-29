@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.libj.net.URLs;
 import org.libj.util.Classes;
-import org.libj.util.Paths;
+import org.libj.util.StringPaths;
 import org.libj.util.function.Throwing;
 
 /**
@@ -48,7 +48,7 @@ import org.libj.util.function.Throwing;
  * MOJOs via {@link FilterParameter}.
  */
 public abstract class FilterMojo extends BaseMojo {
-  public class Configuration extends BaseMojo.Configuration {
+  public static class Configuration extends BaseMojo.Configuration {
     public Configuration(final BaseMojo.Configuration configuration) {
       super(configuration);
     }
@@ -58,7 +58,7 @@ public abstract class FilterMojo extends BaseMojo {
   private Map<String,Object> filteredParameters;
 
   private static URL filterURL(final String value, final File baseDir) throws MalformedURLException {
-    return Paths.isAbsolute(value) ? URLs.toCanonicalURL(value) : baseDir != null ? new File(baseDir, value).toURI().toURL() : new File(value).toURI().toURL();
+    return StringPaths.isAbsolute(value) ? URLs.toCanonicalURL(value) : baseDir != null ? new File(baseDir, value).toURI().toURL() : new File(value).toURI().toURL();
   }
 
   private static URL filterResource(final String value, final ClassLoader classLoader) throws MojoExecutionException {

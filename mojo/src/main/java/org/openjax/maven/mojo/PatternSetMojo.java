@@ -18,7 +18,7 @@ package org.openjax.maven.mojo;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -38,8 +38,8 @@ import org.libj.util.function.Throwing;
 
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
-  private static LinkedHashSet<URL> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
-    final LinkedHashSet<URL> urls = new LinkedHashSet<>();
+  private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
+    final LinkedHashSet<URI> uris = new LinkedHashSet<>();
     for (final Resource projectResource : projectResources) {
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
@@ -47,12 +47,12 @@ public abstract class PatternSetMojo extends ResourcesMojo {
           .walk(dir.toPath())
           .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
           .forEach(Throwing.rethrow(p -> {
-            urls.add(p.toUri().toURL());
+            uris.add(p.toUri());
           }));
       }
     }
 
-    return urls;
+    return uris;
   }
 
   private static Predicate<Path> filter(final File dir, final PatternSetMojo fileSet) {
@@ -109,7 +109,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   public class Configuration extends ResourcesMojo.Configuration {
-    private final LinkedHashSet<URL> fileSets;
+    private final LinkedHashSet<URI> fileSets;
     private final LinkedHashSet<String> includes;
     private final LinkedHashSet<String> excludes;
 
@@ -117,14 +117,14 @@ public abstract class PatternSetMojo extends ResourcesMojo {
       this(configuration, configuration.fileSets, configuration.includes, configuration.excludes);
     }
 
-    private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URL> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
+    private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URI> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
       super(configuration);
       this.fileSets = Objects.requireNonNull(fileSets);
       this.includes = includes;
       this.excludes = excludes;
     }
 
-    public LinkedHashSet<URL> getFileSets() {
+    public LinkedHashSet<URI> getFileSets() {
       return this.fileSets;
     }
 
@@ -167,7 +167,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   public final void execute(final ResourcesMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
       final Map<String,Object> filterParameters = getFilterParameters();
-      final LinkedHashSet<URL> fileSets = getFiles(project, configuration.getResources(), this);
+      final LinkedHashSet<URI> fileSets = getFiles(project, configuration.getResources(), this);
       if (fileSets.size() == 0 && (filterParameters == null || filterParameters.isEmpty())) {
         if (configuration.getFailOnNoOp())
           throw new MojoExecutionException("Empty input parameters (failOnNoOp=true)");
