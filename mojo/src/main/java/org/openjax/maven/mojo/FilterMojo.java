@@ -38,8 +38,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.libj.lang.Classes;
 import org.libj.net.URLs;
-import org.libj.util.Classes;
 import org.libj.util.StringPaths;
 import org.libj.util.function.Throwing;
 
