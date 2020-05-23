@@ -1,6 +1,8 @@
 # Changes by Version
 
-## [v0.4.2](https://github.com/openjax/maven/compare/c79e67b4bd2dda4c14d69bfeda3383b47669be52..HEAD) (2020-05-23)
+## [v0.4.3-SNAPSHOT](https://github.com/openjax/maven/compare/b2f8348bd4204551138ab972d3b7c9a60c76db54..HEAD)
+
+## [v0.4.2](https://github.com/openjax/maven/compare/c79e67b4bd2dda4c14d69bfeda3383b47669be52..b2f8348bd4204551138ab972d3b7c9a60c76db54) (2020-05-23)
 * Improve `AnnotationUtil.getAnnotationParameters`.
 * Add `AnnotationUtil.annotationForMap`.
 * Change from `Set` to `LinkedHashSet` in `PatternSetMojo` and `ResourcesMojo`.
