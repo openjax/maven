@@ -1,9 +1,9 @@
 # Maven
 
-[![Build Status](https://travis-ci.org/openjax/maven.svg?1)](https://travis-ci.org/openjax/maven)
-[![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg?1)](https://coveralls.io/github/openjax/maven)
-[![Javadocs](https://www.javadoc.io/badge/org.openjax.maven/maven.svg?1)](https://www.javadoc.io/doc/org.openjax.maven/maven)
-[![Released Version](https://img.shields.io/maven-central/v/org.openjax.maven/maven.svg?1)](https://mvnrepository.com/artifact/org.openjax.maven/maven)
+[![Build Status](https://travis-ci.org/openjax/maven.svg?branch=master)](https://travis-ci.org/openjax/maven)
+[![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg)](https://coveralls.io/github/openjax/maven)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.maven/maven.svg)](https://www.javadoc.io/doc/org.openjax.maven/maven)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.maven/maven.svg)](https://mvnrepository.com/artifact/org.openjax.maven/maven)
 ![Snapshot Version](https://img.shields.io/nexus/s/org.openjax.maven/maven?label=maven-snapshot&server=https%3A%2F%2Foss.sonatype.org)
 
 ## Introduction
