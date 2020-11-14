@@ -19,6 +19,7 @@ package org.openjax.maven.mojo;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,18 +180,21 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns a list of dependency paths in the specified {@link MavenProject}.
+   * Returns a string array of dependency paths in the specified
+   * {@link MavenProject}.
    *
    * @param project The {@link MavenProject} for which to return the classpath.
    * @param localRepository The local {@link ArtifactRepository}.
-   * @return A list of dependency paths in the specified {@link MavenProject}.
+   * @return A string array of dependency paths in the specified
+   *         {@link MavenProject}.
    * @throws NullPointerException If {@code project} or {@code localRepository}
    *           is null.
    */
-  public static List<String> getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
-    final List<String> classpath = new ArrayList<>(project.getExecutionProject().getDependencies().size());
-    for (final Dependency dependency : project.getExecutionProject().getDependencies())
-      classpath.add(getPathOf(localRepository, dependency));
+  public static String[] getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
+    final String[] classpath = new String[project.getExecutionProject().getDependencies().size()];
+    final List<Dependency> dependencies = project.getExecutionProject().getDependencies();
+    for (int i = 0; i < dependencies.size(); ++i)
+      classpath[i] = getPathOf(localRepository, dependencies.get(i));
 
     return classpath;
   }
@@ -246,7 +250,7 @@ public final class MojoUtil {
     classpath.addAll(project.getRuntimeClasspathElements());
     if (MojoUtil.isInTestPhase(execution)) {
       classpath.addAll(project.getTestClasspathElements());
-      classpath.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
+      Collections.addAll(classpath, MojoUtil.getProjectDependencyPaths(project, localRepository));
     }
 
     final File[] classpathFiles = new File[classpath.size()];

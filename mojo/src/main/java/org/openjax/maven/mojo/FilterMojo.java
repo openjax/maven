@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,7 +176,7 @@ public abstract class FilterMojo extends BaseMojo {
               for (final Resource resource : project.getTestResources())
                 classPaths.add(resource.getDirectory());
 
-              classPaths.addAll(MojoUtil.getProjectDependencyPaths(project, localRepository));
+              Collections.addAll(classPaths, MojoUtil.getProjectDependencyPaths(project, localRepository));
               classPaths.addAll(project.getTestClasspathElements());
             }
 
