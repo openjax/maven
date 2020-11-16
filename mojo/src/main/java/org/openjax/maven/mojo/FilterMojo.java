@@ -40,6 +40,7 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.libj.lang.Classes;
+import org.libj.net.URLStreamHandlers;
 import org.libj.net.URLs;
 import org.libj.util.StringPaths;
 import org.libj.util.function.Throwing;
@@ -49,6 +50,10 @@ import org.libj.util.function.Throwing;
  * MOJOs via {@link FilterParameter}.
  */
 public abstract class FilterMojo extends BaseMojo {
+  static {
+    URLStreamHandlers.loadSPI();
+  }
+
   public static class Configuration extends BaseMojo.Configuration {
     public Configuration(final BaseMojo.Configuration configuration) {
       super(configuration);
@@ -216,12 +221,24 @@ public abstract class FilterMojo extends BaseMojo {
 
   @Override
   public final void execute(final BaseMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
-    try {
+    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    final String[] classpath = MojoUtil.getProjectDependencyPaths(project, session.getLocalRepository());
+    final URL[] urls = new URL[classpath.length];
+    for (int i = 0; i < classpath.length; ++i)
+      urls[i] = URLs.create("file", "", classpath[i]);
+
+    try (final URLClassLoader dependencyClassLoader = new URLClassLoader(urls, contextClassLoader)) {
+      Thread.currentThread().setContextClassLoader(dependencyClassLoader);
       getFilterParameters();
       execute(new Configuration(configuration));
     }
+    catch (final IOException ignore) {
+    }
     catch (final DependencyResolutionRequiredException e) {
       throw new MojoFailureException(e.getMessage(), e);
+    }
+    finally {
+      Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
   }
 
