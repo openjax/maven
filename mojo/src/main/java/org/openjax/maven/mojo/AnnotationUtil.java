@@ -102,6 +102,39 @@ public final class AnnotationUtil {
   }
 
   /**
+   * Returns a map of parameters for {@code annotationType} on {@code cls},
+   * regardless of the annotation's retention spec. If the
+   * {@code annotationType} is not found on {@code cls}, this method returns
+   * {@code null}.
+   *
+   * @param <T> Type parameter of the annotation class.
+   * @param cls The class.
+   * @param annotationType The annotation type.
+   * @return A map of parameters for {@code annotationType} on {@code cls}, or
+   *         {@code null} if no such annotation exists.
+   * @throws IOException If an I/O error has occurred.
+   * @throws NullPointerException If {@code cls} or {@code annotationType} are
+   *           null.
+   */
+  public static <T extends Annotation>T getAnnotationParameters(final Class<?> cls, final Class<T> annotationType) throws IOException {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(cls.getName().replace('.', '/') + ".class")) {
+      if (in == null)
+        throw new IllegalStateException("Unable to locate bytecode for class " + cls.getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
+
+      final ClassReader classReader = new ClassReader(in);
+      final ClassNode classNode = new ClassNode();
+      classReader.accept(classNode, 0);
+      final String desc = "L" + annotationType.getName().replace('.', '/') + ";";
+      final Map<String,Object> invisible = getAnnotationParameters(classNode.invisibleAnnotations, desc);
+      if (invisible != null)
+        return annotationForMap(annotationType, invisible);
+
+      final Map<String,Object> visible = getAnnotationParameters(classNode.visibleAnnotations, desc);
+      return visible == null ? null : annotationForMap(annotationType, visible);
+    }
+  }
+
+  /**
    * Returns a map of parameters for {@code annotationType} on {@code field},
    * regardless of the annotation's retention spec. If the
    * {@code annotationType} is not found on {@code field}, this method returns
@@ -117,27 +150,28 @@ public final class AnnotationUtil {
    *           null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
-    final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class");
-    if (in == null)
-      throw new IllegalStateException("Unable to locate bytecode for class " + field.getDeclaringClass().getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class")) {
+      if (in == null)
+        throw new IllegalStateException("Unable to locate bytecode for class " + field.getDeclaringClass().getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
 
-    final ClassReader classReader = new ClassReader(in);
-    final ClassNode classNode = new ClassNode();
-    classReader.accept(classNode, 0);
-    for (final Object classField : classNode.fields) {
-      final FieldNode fieldNode = (FieldNode)classField;
-      if (field.getName().equals(fieldNode.name)) {
-        final String desc = "L" + annotationType.getName().replace('.', '/') + ";";
-        final Map<String,Object> invisible = getAnnotationParameters(fieldNode.invisibleAnnotations, desc);
-        if (invisible != null)
-          return annotationForMap(annotationType, invisible);
+      final ClassReader classReader = new ClassReader(in);
+      final ClassNode classNode = new ClassNode();
+      classReader.accept(classNode, 0);
+      for (final Object classField : classNode.fields) {
+        final FieldNode fieldNode = (FieldNode)classField;
+        if (field.getName().equals(fieldNode.name)) {
+          final String desc = "L" + annotationType.getName().replace('.', '/') + ";";
+          final Map<String,Object> invisible = getAnnotationParameters(fieldNode.invisibleAnnotations, desc);
+          if (invisible != null)
+            return annotationForMap(annotationType, invisible);
 
-        final Map<String,Object> visible = getAnnotationParameters(fieldNode.visibleAnnotations, desc);
-        return visible == null ? null : annotationForMap(annotationType, visible);
+          final Map<String,Object> visible = getAnnotationParameters(fieldNode.visibleAnnotations, desc);
+          return visible == null ? null : annotationForMap(annotationType, visible);
+        }
       }
-    }
 
-    return null;
+      return null;
+    }
   }
 
   /**

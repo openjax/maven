@@ -18,6 +18,7 @@ package org.openjax.maven.mojo;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,14 +29,20 @@ import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import javax.annotation.meta.When;
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @Nullable
-@RegEx(when = When.MAYBE)
+@RegEx(when=When.MAYBE)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Mojo(name="name")
 public class AnnotationUtilTest {
+  @Parameter(name="parameter")
+  private String parameter;
+
   private static void test(final Annotation annotation) throws IllegalAccessException, InvocationTargetException {
     final Map<String,Object> map = new HashMap<>();
     for (final Method method : annotation.getClass().getMethods())
@@ -47,7 +54,21 @@ public class AnnotationUtilTest {
   }
 
   @Test
-  public void test() throws IllegalAccessException, InvocationTargetException {
+  public void testGetAnnotationParametersClass() throws IOException {
+    final Mojo annotation = AnnotationUtil.getAnnotationParameters(AnnotationUtilTest.class, Mojo.class);
+    assertNotNull(annotation);
+    assertEquals("name", annotation.name());
+  }
+
+  @Test
+  public void testGetAnnotationParametersField() throws IOException, NoSuchFieldException {
+    final Parameter annotation = AnnotationUtil.getAnnotationParameters(AnnotationUtilTest.class.getDeclaredField("parameter"), Parameter.class);
+    assertNotNull(annotation);
+    assertEquals("parameter", annotation.name());
+  }
+
+  @Test
+  public void testGetAnnotation() throws IllegalAccessException, InvocationTargetException {
     test(AnnotationUtilTest.class.getAnnotation(RegEx.class));
     test(AnnotationUtilTest.class.getAnnotation(Nullable.class));
     test(AnnotationUtilTest.class.getAnnotation(FixMethodOrder.class));
