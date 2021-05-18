@@ -78,7 +78,7 @@ public final class AnnotationUtil {
       if (desc.equals(annotationNode.desc)) {
         final Map<String,Object> parameters = new HashMap<>();
         if (annotationNode.values != null)
-          for (int i = 0; i < annotationNode.values.size();) {
+          for (int i = 0, len = annotationNode.values.size(); i < len;) {
             final String name = (String)annotationNode.values.get(i++);
             final Object rawValue = annotationNode.values.get(i++);
             final Object value;

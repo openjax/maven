@@ -104,7 +104,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
   private static void convertToRegex(final List<String> list) {
     if (list != null)
-      for (int i = 0; i < list.size(); ++i)
+      for (int i = 0, len = list.size(); i < len; ++i)
         list.set(i, convertToRegex(list.get(i)));
   }
 

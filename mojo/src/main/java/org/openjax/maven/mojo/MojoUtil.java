@@ -193,7 +193,7 @@ public final class MojoUtil {
   public static String[] getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
     final String[] classpath = new String[project.getExecutionProject().getDependencies().size()];
     final List<Dependency> dependencies = project.getExecutionProject().getDependencies();
-    for (int i = 0; i < dependencies.size(); ++i)
+    for (int i = 0, len = dependencies.size(); i < len; ++i)
       classpath[i] = getPathOf(localRepository, dependencies.get(i));
 
     return classpath;

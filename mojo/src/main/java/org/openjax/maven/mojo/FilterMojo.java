@@ -159,7 +159,7 @@ public abstract class FilterMojo extends BaseMojo {
             final File baseDir = project.getBasedir().getAbsoluteFile();
             if (isList) {
               final List<String> values = (List<String>)(filteredValue = value);
-              for (int i = 0; i < values.size(); ++i) {
+              for (int i = 0, len = values.size(); i < len; ++i) {
                 values.set(i, filterURL(values.get(i), baseDir).toString());
               }
             }
@@ -194,7 +194,7 @@ public abstract class FilterMojo extends BaseMojo {
             try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {
               if (isList) {
                 final List<String> values = (List<String>)(filteredValue = value);
-                for (int i = 0; i < values.size(); ++i) {
+                for (int i = 0, len = values.size(); i < len; ++i) {
                   values.set(i, filterResource(values.get(i), classLoader).toString());
                 }
               }
