@@ -1,6 +1,6 @@
 # Maven
 
-[![Build Status](https://travis-ci.org/openjax/maven.svg?branch=master)](https://travis-ci.org/openjax/maven)
+[![Build Status](https://github.com/openjax/maven/workflows/build.yml/badge.svg)](https://github.com/openjax/maven/actions/workflows/build.yml)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/maven/badge.svg)](https://coveralls.io/github/openjax/maven)
 [![Javadocs](https://www.javadoc.io/badge/org.openjax.maven/maven.svg)](https://www.javadoc.io/doc/org.openjax.maven/maven)
 [![Released Version](https://img.shields.io/maven-central/v/org.openjax.maven/maven.svg)](https://mvnrepository.com/artifact/org.openjax.maven/maven)
