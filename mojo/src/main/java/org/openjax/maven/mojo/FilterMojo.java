@@ -127,7 +127,7 @@ public abstract class FilterMojo extends BaseMojo {
       for (final Field field : fields) {
         final Parameter parameter = AnnotationUtil.getAnnotationParameters(field, Parameter.class);
         if (parameter == null)
-          throw new MojoFailureException("@" + FilterParameter.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + field.getDeclaringClass().getName() + "#" + field.getName());
+          throw new MojoFailureException("@" + FilterParameter.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + field.getDeclaringClass().getName() + "." + field.getName());
 
         final boolean isList = List.class.isAssignableFrom(field.getType());
         final Type typeArgument;
