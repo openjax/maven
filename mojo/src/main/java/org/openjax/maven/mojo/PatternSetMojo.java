@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -34,6 +33,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.libj.lang.Assertions;
 import org.libj.util.function.Throwing;
 
 @Mojo(name="patternset")
@@ -119,7 +119,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
     private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URI> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
       super(configuration);
-      this.fileSets = Objects.requireNonNull(fileSets);
+      this.fileSets = Assertions.assertNotNull(fileSets);
       this.includes = includes;
       this.excludes = excludes;
     }

@@ -27,8 +27,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
+import org.libj.lang.Assertions;
 import org.libj.util.ArrayUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -113,7 +113,7 @@ public final class AnnotationUtil {
    * @return A map of parameters for {@code annotationType} on {@code cls}, or
    *         {@code null} if no such annotation exists.
    * @throws IOException If an I/O error has occurred.
-   * @throws NullPointerException If {@code cls} or {@code annotationType} are
+   * @throws IllegalArgumentException If {@code cls} or {@code annotationType} are
    *           null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Class<?> cls, final Class<T> annotationType) throws IOException {
@@ -146,7 +146,7 @@ public final class AnnotationUtil {
    * @return A map of parameters for {@code annotationType} on {@code field}, or
    *         {@code null} if no such annotation exists.
    * @throws IOException If an I/O error has occurred.
-   * @throws NullPointerException If {@code field} or {@code annotationType} are
+   * @throws IllegalArgumentException If {@code field} or {@code annotationType} are
    *           null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
@@ -205,12 +205,12 @@ public final class AnnotationUtil {
    *           {@code ReflectPermission("newProxyInPackage.{package name}")}
    *           permission denies access.</li>
    *           </ul>
-   * @throws NullPointerException If the specified {@code annotationType} or
+   * @throws IllegalArgumentException If the specified {@code annotationType} or
    *           {@code memberValues} is null.
    */
   @SuppressWarnings("unchecked")
   static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
-    Objects.requireNonNull(memberValues);
+    Assertions.assertNotNull(memberValues);
     return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
       @Override
       public Object invoke(final Object proxy, final Method method, final Object[] args) {

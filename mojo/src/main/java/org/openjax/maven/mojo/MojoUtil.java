@@ -51,7 +51,7 @@ public final class MojoUtil {
    * @param execution The {@link MojoExecution}.
    * @return The {@link PluginExecution} in the {@code mojoExecution}, if a
    *         plugin is currently being executed.
-   * @throws NullPointerException If {@code execution} is null.
+   * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static PluginExecution getPluginExecution(final MojoExecution execution) {
     final Plugin plugin = execution.getPlugin();
@@ -71,7 +71,7 @@ public final class MojoUtil {
    * @return {@code true} if the specified {@link MojoExecution} is in a
    *         lifecycle phase, and the name of the lifecycle phase contains
    *         "test".
-   * @throws NullPointerException If {@code execution} is null.
+   * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static boolean isInTestPhase(final MojoExecution execution) {
     return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
@@ -107,7 +107,7 @@ public final class MojoUtil {
    * @param handler The {@link ArtifactHandler}.
    * @return A {@link Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
-   * @throws NullPointerException If {@code dependency} or {@code handler} is
+   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is
    *           null.
    */
   public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler handler) {
@@ -122,7 +122,7 @@ public final class MojoUtil {
    * @param handler The {@link ArtifactHandler}.
    * @return A {@link Artifact} representation of {@code dependency}, qualified
    *         by {@code artifactHandler}.
-   * @throws NullPointerException If {@code dependency} or {@code handler} is
+   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is
    *           null.
    */
   public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler handler) {
@@ -138,7 +138,7 @@ public final class MojoUtil {
    * @param handler The {@link ArtifactHandler}.
    * @return The classpath of dependencies for the {@code pluginDescriptor},
    *         relative to {@code localRepository}.
-   * @throws NullPointerException If {@code descriptor}, {@code localRepository}
+   * @throws IllegalArgumentException If {@code descriptor}, {@code localRepository}
    *           or {@code handler} is null.
    */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) {
@@ -157,7 +157,7 @@ public final class MojoUtil {
    * @param dependency The dependency.
    * @return The filesystem path of {@code dependency} located in
    *         {@code localRepository}.
-   * @throws NullPointerException If {@code localRepository} or
+   * @throws IllegalArgumentException If {@code localRepository} or
    *           {@code dependency} is null.
    */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
@@ -187,7 +187,7 @@ public final class MojoUtil {
    * @param localRepository The local {@link ArtifactRepository}.
    * @return A string array of dependency paths in the specified
    *         {@link MavenProject}.
-   * @throws NullPointerException If {@code project} or {@code localRepository}
+   * @throws IllegalArgumentException If {@code project} or {@code localRepository}
    *           is null.
    */
   public static String[] getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
@@ -209,7 +209,7 @@ public final class MojoUtil {
    * @throws MojoFailureException If {@code dir} points to an existing path that
    *           is a file, or {@code dir} or its necessary but nonexistent parent
    *           directories could not be created.
-   * @throws NullPointerException If {@code dir} is null.
+   * @throws IllegalArgumentException If {@code dir} is null.
    */
   public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
     if (dir.exists()) {
@@ -240,7 +240,7 @@ public final class MojoUtil {
    * @throws DependencyResolutionRequiredException If the specified
    *           {@link MavenProject} does not meet dependency resolution
    *           requirements.
-   * @throws NullPointerException If {@code project}, {@code execution},
+   * @throws IllegalArgumentException If {@code project}, {@code execution},
    *           {@code descriptor}, {@code localRepository} or {@code handler} is
    *           null.
    */
@@ -279,7 +279,7 @@ public final class MojoUtil {
    *         regular expression specified by {@code rename}, or the original
    *         file name if {@code rename} is null.
    * @throws IllegalArgumentException If {@code rename} is malformed.
-   * @throws NullPointerException If {@code path} is null.
+   * @throws IllegalArgumentException If {@code path} is null.
    * @see StringPaths#getName(String)
    */
   public static String getRenamedFileName(final String path, final String rename) {
