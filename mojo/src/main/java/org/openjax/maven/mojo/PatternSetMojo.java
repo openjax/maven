@@ -34,7 +34,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.libj.lang.Assertions;
-import org.libj.util.function.Throwing;
 
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
@@ -46,9 +45,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
         Files
           .walk(dir.toPath())
           .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
-          .forEach(Throwing.rethrow(p -> {
-            uris.add(p.toUri());
-          }));
+          .forEach(p -> uris.add(p.toUri()));
       }
     }
 

@@ -70,7 +70,7 @@ public abstract class FilterMojo extends BaseMojo {
   private static URL filterResource(final String value, final ClassLoader classLoader) throws MojoExecutionException {
     final URL url = classLoader.getResource(value);
     if (url == null)
-      throw new MojoExecutionException("Resource not found in context ClassLoader: " + value);
+      throw new MojoExecutionException("Resource not found in Context ClassLoader: " + value);
 
     return url;
   }
@@ -78,9 +78,8 @@ public abstract class FilterMojo extends BaseMojo {
   /**
    * Filters parameters declared with the {@link FilterParameter} annotation,
    * and replaces each field's value with the filtered value.
-   * <p>
-   * <b>NOTE:</b> This method is not thread safe.
    *
+   * @implNote This method is not thread safe.
    * @return A map of parameter name to a list of the filtered parameter values,
    *         or {@code null} if no fields were found with the
    *         {@link FilterParameter} annotation.

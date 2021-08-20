@@ -84,7 +84,7 @@ public abstract class BaseMojo extends AbstractMojo {
    * @return Whether the current execution is in a test phase, which includes
    *         any phase whose name contains "test".
    */
-  public boolean isInTestPhase() {
+  protected final boolean isInTestPhase() {
     return inTestPhase == null ? inTestPhase = MojoUtil.isInTestPhase(execution) : inTestPhase;
   }
 
