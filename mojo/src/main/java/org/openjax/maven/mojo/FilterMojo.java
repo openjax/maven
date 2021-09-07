@@ -79,7 +79,7 @@ public abstract class FilterMojo extends BaseMojo {
    * Filters parameters declared with the {@link FilterParameter} annotation,
    * and replaces each field's value with the filtered value.
    *
-   * @implNote This method is not thread safe.
+   * @implSpec This method is not thread safe.
    * @return A map of parameter name to a list of the filtered parameter values,
    *         or {@code null} if no fields were found with the
    *         {@link FilterParameter} annotation.
@@ -87,7 +87,7 @@ public abstract class FilterMojo extends BaseMojo {
    *           but has not been resolved.
    * @throws MojoExecutionException If a source input property is declared with
    *           {@code required=true}, and no property values are declared in the
-   *           POM
+   *           POM.
    * @throws MojoFailureException If no fields are found with the
    *           {@link FilterParameter} annotation in the specified class, or if
    *           a field with the {@link FilterParameter} annotation is declared
