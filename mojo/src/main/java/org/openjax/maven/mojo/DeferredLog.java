@@ -93,7 +93,7 @@ public abstract class DeferredLog implements Log {
     }
   }
 
-  protected abstract void flush(final Level level, final CharSequence content, final Throwable error) throws MojoExecutionException;
+  protected abstract void flush(Level level, CharSequence content, Throwable error) throws MojoExecutionException;
 
   public Log getTarget() {
     return log;
