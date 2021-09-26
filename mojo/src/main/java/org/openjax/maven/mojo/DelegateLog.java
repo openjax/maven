@@ -16,8 +16,9 @@
 
 package org.openjax.maven.mojo;
 
+import static org.libj.lang.Assertions.*;
+
 import org.apache.maven.plugin.logging.Log;
-import org.libj.lang.Assertions;
 
 /**
  * A {@link DelegateLog} contains some other {@link Log}, to which it delegates
@@ -38,7 +39,7 @@ public class DelegateLog implements Log {
    * @throws IllegalArgumentException If the target {@link Log} is null.
    */
   public DelegateLog(final Log target) {
-    this.log = Assertions.assertNotNull(target);
+    this.log = assertNotNull(target);
   }
 
   @Override

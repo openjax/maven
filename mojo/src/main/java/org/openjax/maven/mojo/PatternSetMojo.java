@@ -16,6 +16,8 @@
 
 package org.openjax.maven.mojo;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -33,8 +35,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.libj.lang.Assertions;
-
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
@@ -116,7 +116,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
     private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URI> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
       super(configuration);
-      this.fileSets = Assertions.assertNotNull(fileSets);
+      this.fileSets = assertNotNull(fileSets);
       this.includes = includes;
       this.excludes = excludes;
     }

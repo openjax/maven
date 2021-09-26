@@ -16,6 +16,8 @@
 
 package org.openjax.maven.mojo;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -28,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.libj.lang.Assertions;
 import org.libj.util.ArrayUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -210,7 +211,7 @@ public final class AnnotationUtil {
    */
   @SuppressWarnings("unchecked")
   static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
-    Assertions.assertNotNull(memberValues);
+    assertNotNull(memberValues);
     return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
       @Override
       public Object invoke(final Object proxy, final Method method, final Object[] args) {
