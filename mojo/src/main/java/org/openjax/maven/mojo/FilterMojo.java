@@ -107,8 +107,6 @@ public abstract class FilterMojo extends BaseMojo {
 
     final MavenProject project = (MavenProject)getPluginContext().get("project");
     final Map<String,Object> nameToInputs = new HashMap<String,Object>() {
-      private static final long serialVersionUID = -6518007948977059826L;
-
       @Override
       public boolean isEmpty() {
         if (super.isEmpty())
