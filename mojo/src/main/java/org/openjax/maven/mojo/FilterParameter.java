@@ -23,8 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that declares a field is a source input property. This annotation
- * can only be used on fields that also have the
+ * Annotation that declares a field is a source input property. This annotation can only be used on fields that also have the
  * {@link org.apache.maven.plugins.annotations.Parameter} annotation.
  */
 @Inherited

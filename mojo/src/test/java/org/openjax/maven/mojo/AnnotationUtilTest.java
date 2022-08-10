@@ -45,7 +45,7 @@ public class AnnotationUtilTest {
 
   private static void test(final Annotation annotation) throws IllegalAccessException, InvocationTargetException {
     final Map<String,Object> map = new HashMap<>();
-    for (final Method method : annotation.getClass().getMethods())
+    for (final Method method : annotation.getClass().getMethods()) // [A]
       if (method.getReturnType() != Void.class && method.getParameterCount() == 0 && !"toString".equals(method.getName()) && !"hashCode".equals(method.getName()) && !"annotationType".equals(method.getName()) && !"wait".equals(method.getName()) && !"notify".equals(method.getName()) && !"notifyAll".equals(method.getName()) && !"getClass".equals(method.getName()))
         map.put(method.getName(), method.invoke(annotation));
 

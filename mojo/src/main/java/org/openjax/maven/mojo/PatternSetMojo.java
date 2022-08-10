@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import org.apache.maven.project.MavenProject;
 public abstract class PatternSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
     final LinkedHashSet<URI> uris = new LinkedHashSet<>();
-    for (final Resource projectResource : projectResources) {
+    for (final Resource projectResource : projectResources) { // [S]
       final File dir = new File(projectResource.getDirectory());
       if (dir.exists()) {
         Files
@@ -66,9 +67,10 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     if (filters == null)
       return false;
 
-    for (final String filter : filters)
-      if (pathname.getAbsolutePath().substring(dir.getAbsolutePath().length() + 1).matches(filter))
-        return true;
+    if (filters.size() > 0)
+      for (final String filter : filters) // [L]
+        if (pathname.getAbsolutePath().substring(dir.getAbsolutePath().length() + 1).matches(filter))
+          return true;
 
     return false;
   }
@@ -100,9 +102,12 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   private static void convertToRegex(final List<String> list) {
-    if (list != null)
-      for (int i = 0, len = list.size(); i < len; ++i)
-        list.set(i, convertToRegex(list.get(i)));
+    final int i$;
+    if (list != null && (i$ = list.size()) > 0) {
+      final Iterator<String> iterator = list.iterator();
+      for (int i = 0; i < i$; ++i) // [I]
+        list.set(i, convertToRegex(iterator.next()));
+    }
   }
 
   public class Configuration extends ResourcesMojo.Configuration {

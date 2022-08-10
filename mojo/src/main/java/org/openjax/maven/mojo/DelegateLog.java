@@ -21,13 +21,10 @@ import static org.libj.lang.Assertions.*;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * A {@link DelegateLog} contains some other {@link Log}, to which it delegates
- * its method calls, possibly transforming the data along the way or providing
- * additional functionality. The class {@link DelegateLog} itself simply
- * overrides all methods of {@link Log} with versions that pass all requests to
- * the source {@link Log}. Subclasses of {@link DelegateLog} may further
- * override some of these methods and may also provide additional methods and
- * fields.
+ * A {@link DelegateLog} contains some other {@link Log}, to which it delegates its method calls, possibly transforming the data
+ * along the way or providing additional functionality. The class {@link DelegateLog} itself simply overrides all methods of
+ * {@link Log} with versions that pass all requests to the source {@link Log}. Subclasses of {@link DelegateLog} may further
+ * override some of these methods and may also provide additional methods and fields.
  */
 public class DelegateLog implements Log {
   private final Log log;

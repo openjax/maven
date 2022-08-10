@@ -71,17 +71,19 @@ public final class AnnotationUtil {
   }
 
   private static Map<String,Object> getAnnotationParameters(final List<?> annotations, final String desc) {
-    if (annotations == null || annotations.size() == 0)
+    final int i$;
+    if (annotations == null || (i$ = annotations.size()) == 0)
       return null;
 
-    for (final Object annotation : annotations) {
-      final AnnotationNode annotationNode = (AnnotationNode)annotation;
+    for (int i = 0; i < i$; ++i) { // [RA]
+      final AnnotationNode annotationNode = (AnnotationNode)annotations.get(i);
       if (desc.equals(annotationNode.desc)) {
         final Map<String,Object> parameters = new HashMap<>();
-        if (annotationNode.values != null)
-          for (int i = 0, len = annotationNode.values.size(); i < len;) {
-            final String name = (String)annotationNode.values.get(i++);
-            final Object rawValue = annotationNode.values.get(i++);
+        final List<Object> values = annotationNode.values;
+        if (values != null) {
+          for (int j = 0, j$ = values.size(); j < j$;) { // [RA]
+            final String name = (String)values.get(j++);
+            final Object rawValue = values.get(j++);
             final Object value;
             if (rawValue instanceof String[]) {
               final String[] data = (String[])rawValue;
@@ -94,6 +96,7 @@ public final class AnnotationUtil {
 
             parameters.put(name, value);
           }
+        }
 
         return parameters;
       }
@@ -103,19 +106,15 @@ public final class AnnotationUtil {
   }
 
   /**
-   * Returns a map of parameters for {@code annotationType} on {@code cls},
-   * regardless of the annotation's retention spec. If the
-   * {@code annotationType} is not found on {@code cls}, this method returns
-   * {@code null}.
+   * Returns a map of parameters for {@code annotationType} on {@code cls}, regardless of the annotation's retention spec. If the
+   * {@code annotationType} is not found on {@code cls}, this method returns {@code null}.
    *
    * @param <T> Type parameter of the annotation class.
    * @param cls The class.
    * @param annotationType The annotation type.
-   * @return A map of parameters for {@code annotationType} on {@code cls}, or
-   *         {@code null} if no such annotation exists.
+   * @return A map of parameters for {@code annotationType} on {@code cls}, or {@code null} if no such annotation exists.
    * @throws IOException If an I/O error has occurred.
-   * @throws IllegalArgumentException If {@code cls} or {@code annotationType} are
-   *           null.
+   * @throws IllegalArgumentException If {@code cls} or {@code annotationType} are null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Class<?> cls, final Class<T> annotationType) throws IOException {
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(cls.getName().replace('.', '/') + ".class")) {
@@ -136,19 +135,15 @@ public final class AnnotationUtil {
   }
 
   /**
-   * Returns a map of parameters for {@code annotationType} on {@code field},
-   * regardless of the annotation's retention spec. If the
-   * {@code annotationType} is not found on {@code field}, this method returns
-   * {@code null}.
+   * Returns a map of parameters for {@code annotationType} on {@code field}, regardless of the annotation's retention spec. If the
+   * {@code annotationType} is not found on {@code field}, this method returns {@code null}.
    *
    * @param <T> Type parameter of the annotation class.
    * @param field The field.
    * @param annotationType The annotation type.
-   * @return A map of parameters for {@code annotationType} on {@code field}, or
-   *         {@code null} if no such annotation exists.
+   * @return A map of parameters for {@code annotationType} on {@code field}, or {@code null} if no such annotation exists.
    * @throws IOException If an I/O error has occurred.
-   * @throws IllegalArgumentException If {@code field} or {@code annotationType} are
-   *           null.
+   * @throws IllegalArgumentException If {@code field} or {@code annotationType} are null.
    */
   public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class")) {
@@ -158,8 +153,9 @@ public final class AnnotationUtil {
       final ClassReader classReader = new ClassReader(in);
       final ClassNode classNode = new ClassNode();
       classReader.accept(classNode, 0);
-      for (final Object classField : classNode.fields) {
-        final FieldNode fieldNode = (FieldNode)classField;
+      final List<FieldNode> fields = classNode.fields;
+      for (int i = 0, len = fields.size(); i < len; ++i) { // [RA]
+        final FieldNode fieldNode = fields.get(i);
         if (field.getName().equals(fieldNode.name)) {
           final String desc = "L" + annotationType.getName().replace('.', '/') + ";";
           final Map<String,Object> invisible = getAnnotationParameters(fieldNode.invisibleAnnotations, desc);
@@ -176,38 +172,26 @@ public final class AnnotationUtil {
   }
 
   /**
-   * Creates a new instance of an annotation of the specified type and provided
-   * member values.
+   * Creates a new instance of an annotation of the specified type and provided member values.
    *
    * @param <T> Type parameter of the annotation class.
    * @param annotationType The annotation type.
    * @param memberValues The member values.
-   * @return A new instance of an annotation of the specified type and provided
-   *         member values.
-   * @throws IllegalArgumentException If any restrictions on the parameters are
-   *           violated.
-   * @throws SecurityException If a security manager, <em>s</em>, is present and
-   *           any of the following conditions is met:
+   * @return A new instance of an annotation of the specified type and provided member values.
+   * @throws IllegalArgumentException If any restrictions on the parameters are violated.
+   * @throws SecurityException If a security manager, <em>s</em>, is present and any of the following conditions is met:
    *           <ul>
-   *           <li>the given {@code loader} is {@code null} and the caller's
-   *           class loader is not {@code null} and the invocation of
-   *           {@link SecurityManager#checkPermission s.checkPermission} with
-   *           {@code RuntimePermission("getClassLoader")} permission denies
-   *           access;</li>
-   *           <li>for each proxy interface, {@code intf}, the caller's class
-   *           loader is not the same as or an ancestor of the class loader for
-   *           {@code intf} and invocation of
-   *           {@link SecurityManager#checkPackageAccess s.checkPackageAccess()}
-   *           denies access to {@code intf};</li>
-   *           <li>any of the given proxy interfaces is non-public and the
-   *           caller class is not in the same {@linkplain Package runtime
-   *           package} as the non-public interface and the invocation of
-   *           {@link SecurityManager#checkPermission s.checkPermission} with
-   *           {@code ReflectPermission("newProxyInPackage.{package name}")}
-   *           permission denies access.</li>
+   *           <li>the given {@code loader} is {@code null} and the caller's class loader is not {@code null} and the invocation of
+   *           {@link SecurityManager#checkPermission s.checkPermission} with {@code RuntimePermission("getClassLoader")} permission
+   *           denies access;</li>
+   *           <li>for each proxy interface, {@code intf}, the caller's class loader is not the same as or an ancestor of the class
+   *           loader for {@code intf} and invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies
+   *           access to {@code intf};</li>
+   *           <li>any of the given proxy interfaces is non-public and the caller class is not in the same {@linkplain Package
+   *           runtime package} as the non-public interface and the invocation of {@link SecurityManager#checkPermission
+   *           s.checkPermission} with {@code ReflectPermission("newProxyInPackage.{package name}")} permission denies access.</li>
    *           </ul>
-   * @throws IllegalArgumentException If the specified {@code annotationType} or
-   *           {@code memberValues} is null.
+   * @throws IllegalArgumentException If the specified {@code annotationType} or {@code memberValues} is null.
    */
   @SuppressWarnings("unchecked")
   static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {

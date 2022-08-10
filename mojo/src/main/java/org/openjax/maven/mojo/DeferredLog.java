@@ -24,8 +24,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * A {@link Log} that defers the output of log messages to the time of the
- * invocation of {@link #flush(Level, CharSequence, Throwable)}.
+ * A {@link Log} that defers the output of log messages to the time of the invocation of
+ * {@link #flush(Level, CharSequence, Throwable)}.
  */
 public abstract class DeferredLog implements Log {
   private final ArrayList<Entry> entries = new ArrayList<>();
@@ -71,11 +71,9 @@ public abstract class DeferredLog implements Log {
     };
 
     /**
-     * Flushes the provided {@code content} and {@code error} to the specified
-     * {@link Log}.
+     * Flushes the provided {@code content} and {@code error} to the specified {@link Log}.
      *
-     * @param log The {@link Log} to which the {@code content} and {@code error}
-     *          are to be flushed.
+     * @param log The {@link Log} to which the {@code content} and {@code error} are to be flushed.
      * @param content The {@link CharSequence} to be flushed.
      * @param error The {@link Throwable} to be flushed.
      */
@@ -101,9 +99,11 @@ public abstract class DeferredLog implements Log {
   }
 
   public void flush(final Level level) throws MojoExecutionException {
-    for (final Entry entry : entries)
+    for (int i = 0, i$ = entries.size(); i < i$; ++i) { // [RA]
+      final Entry entry = entries.get(i);
       if (level == null || entry.level.ordinal() <= level.ordinal())
         flush(entry.level, entry.content, entry.error);
+    }
   }
 
   @Override

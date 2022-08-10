@@ -27,6 +27,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,12 +43,12 @@ import org.apache.maven.project.MavenProject;
 import org.libj.lang.Classes;
 import org.libj.net.URLStreamHandlers;
 import org.libj.net.URLs;
+import org.libj.util.CollectionUtil;
 import org.libj.util.StringPaths;
 import org.libj.util.function.Throwing;
 
 /**
- * An abstract class extending {@link BaseMojo} that parameter filtering for
- * MOJOs via {@link FilterParameter}.
+ * An abstract class extending {@link BaseMojo} that parameter filtering for MOJOs via {@link FilterParameter}.
  */
 public abstract class FilterMojo extends BaseMojo {
   static {
@@ -76,24 +77,18 @@ public abstract class FilterMojo extends BaseMojo {
   }
 
   /**
-   * Filters parameters declared with the {@link FilterParameter} annotation,
-   * and replaces each field's value with the filtered value.
+   * Filters parameters declared with the {@link FilterParameter} annotation, and replaces each field's value with the filtered
+   * value.
    *
    * @implSpec This method is not thread safe.
-   * @return A map of parameter name to a list of the filtered parameter values,
-   *         or {@code null} if no fields were found with the
+   * @return A map of parameter name to a list of the filtered parameter values, or {@code null} if no fields were found with the
    *         {@link FilterParameter} annotation.
-   * @throws DependencyResolutionRequiredException If an artifact file is used,
-   *           but has not been resolved.
-   * @throws MojoExecutionException If a source input property is declared with
-   *           {@code required=true}, and no property values are declared in the
-   *           POM.
-   * @throws MojoFailureException If no fields are found with the
-   *           {@link FilterParameter} annotation in the specified class, or if
-   *           a field with the {@link FilterParameter} annotation is declared
-   *           with a type other than {@link List}, or if a field with the
-   *           {@link FilterParameter} annotation does not declare the
-   *           {@link Parameter} annotation.
+   * @throws DependencyResolutionRequiredException If an artifact file is used, but has not been resolved.
+   * @throws MojoExecutionException If a source input property is declared with {@code required=true}, and no property values are
+   *           declared in the POM.
+   * @throws MojoFailureException If no fields are found with the {@link FilterParameter} annotation in the specified class, or if a
+   *           field with the {@link FilterParameter} annotation is declared with a type other than {@link List}, or if a field with
+   *           the {@link FilterParameter} annotation does not declare the {@link Parameter} annotation.
    */
   @SuppressWarnings("unchecked")
   protected Map<String,Object> getFilterParameters() throws DependencyResolutionRequiredException, MojoExecutionException, MojoFailureException {
@@ -112,7 +107,7 @@ public abstract class FilterMojo extends BaseMojo {
         if (super.isEmpty())
           return true;
 
-        for (final Object value : values())
+        for (final Object value : values()) // [C]
           if (value != null && (!(value instanceof List) || ((List<?>)value).size() > 0))
             return false;
 
@@ -121,7 +116,7 @@ public abstract class FilterMojo extends BaseMojo {
     };
 
     try {
-      for (final Field field : fields) {
+      for (final Field field : fields) { // [A]
         final Parameter parameter = AnnotationUtil.getAnnotationParameters(field, Parameter.class);
         if (parameter == null)
           throw new MojoFailureException("@" + FilterParameter.class.getSimpleName() + " annotation can only be used on field having @" + Parameter.class.getSimpleName() + " annotation: " + field.getDeclaringClass().getName() + "." + field.getName());
@@ -156,8 +151,17 @@ public abstract class FilterMojo extends BaseMojo {
             final File baseDir = project.getBasedir().getAbsoluteFile();
             if (isList) {
               final List<String> values = (List<String>)(filteredValue = value);
-              for (int i = 0, len = values.size(); i < len; ++i) {
-                values.set(i, filterURL(values.get(i), baseDir).toString());
+              final int i$ = values.size();
+              if (i$ > 0) {
+                if (CollectionUtil.isRandomAccess(values)) {
+                  for (int i = 0; i < i$; ++i) // [RA]
+                    values.set(i, filterURL(values.get(i), baseDir).toString());
+                }
+                else {
+                  final Iterator<String> iterator = values.iterator();
+                  for (int i = 0; i < i$; ++i) // [I]
+                    values.set(i, filterURL(iterator.next(), baseDir).toString());
+                }
               }
             }
             else {
@@ -167,23 +171,44 @@ public abstract class FilterMojo extends BaseMojo {
           }
           else if (filterType == FilterType.RESOURCE) {
             final List<String> classPaths = new ArrayList<>();
-            for (final Resource resource : project.getResources())
-              classPaths.add(resource.getDirectory());
+            final List<Resource> resources = project.getResources();
+            final int i$ = resources.size();
+            if (i$ > 0) {
+              if (CollectionUtil.isRandomAccess(resources)) {
+                for (int i = 0; i < i$; ++i) // [RA]
+                  classPaths.add(resources.get(i).getDirectory());
+              }
+              else {
+                final Iterator<Resource> iterator = resources.iterator();
+                for (int i = 0; i < i$; ++i) // [I]
+                  classPaths.add(iterator.next().getDirectory());
+              }
+            }
 
             final ArtifactRepository localRepository = session.getLocalRepository();
             classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)getPluginContext().get("pluginDescriptor"), localRepository, new DefaultArtifactHandler("jar")));
             classPaths.addAll(project.getRuntimeClasspathElements());
             classPaths.addAll(project.getCompileClasspathElements());
             if (isInTestPhase()) {
-              for (final Resource resource : project.getTestResources())
-                classPaths.add(resource.getDirectory());
+              final List<Resource> testResources = project.getTestResources();
+              final int j$ = testResources.size();
+              if (j$ > 0) {
+                if (CollectionUtil.isRandomAccess(testResources)) {
+                  for (int j = 0; j < j$; ++j) // [RA]
+                    classPaths.add(testResources.get(j).getDirectory());
+                }
+                else {
+                  for (final Resource testResource : testResources) // [I]
+                    classPaths.add(testResource.getDirectory());
+                }
+              }
 
               Collections.addAll(classPaths, MojoUtil.getProjectDependencyPaths(project, localRepository));
               classPaths.addAll(project.getTestClasspathElements());
             }
 
             final URL[] classPathURLs = new URL[classPaths.size()];
-            for (int i = 0; i < classPathURLs.length; ++i) {
+            for (int i = 0; i < classPathURLs.length; ++i) { // [A]
               final String path = classPaths.get(i);
               classPathURLs[i] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
             }
@@ -191,8 +216,17 @@ public abstract class FilterMojo extends BaseMojo {
             try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {
               if (isList) {
                 final List<String> values = (List<String>)(filteredValue = value);
-                for (int i = 0, len = values.size(); i < len; ++i) {
-                  values.set(i, filterResource(values.get(i), classLoader).toString());
+                final int j$ = values.size();
+                if (j$ > 0) {
+                  if (CollectionUtil.isRandomAccess(values)) {
+                    for (int j = 0; j < j$; ++j) // [RA]
+                      values.set(j, filterResource(values.get(j), classLoader).toString());
+                  }
+                  else {
+                    final Iterator<String> iterator = values.iterator();
+                    for (int j = 0; j < j$; ++j) // [I]
+                      values.set(j, filterResource(iterator.next(), classLoader).toString());
+                  }
                 }
               }
               else {
@@ -221,7 +255,7 @@ public abstract class FilterMojo extends BaseMojo {
     final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     final String[] classpath = MojoUtil.getProjectDependencyPaths(project, session.getLocalRepository());
     final URL[] urls = new URL[classpath.length];
-    for (int i = 0; i < classpath.length; ++i)
+    for (int i = 0; i < classpath.length; ++i) // [A]
       urls[i] = URLs.create("file", "", classpath[i]);
 
     try (final URLClassLoader dependencyClassLoader = new URLClassLoader(urls, contextClassLoader)) {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,23 +41,22 @@ import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.libj.util.StringPaths;
 
 /**
- * Utility functions that perform a variety of operations related to Maven
- * projects, executions, plugins, repositories, and dependencies.
+ * Utility functions that perform a variety of operations related to Maven projects, executions, plugins, repositories, and
+ * dependencies.
  */
 public final class MojoUtil {
   /**
-   * Returns the {@link PluginExecution} in the {@code mojoExecution}, if a
-   * plugin is currently being executed.
+   * Returns the {@link PluginExecution} in the {@code mojoExecution}, if a plugin is currently being executed.
    *
    * @param execution The {@link MojoExecution}.
-   * @return The {@link PluginExecution} in the {@code mojoExecution}, if a
-   *         plugin is currently being executed.
+   * @return The {@link PluginExecution} in the {@code mojoExecution}, if a plugin is currently being executed.
    * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static PluginExecution getPluginExecution(final MojoExecution execution) {
     final Plugin plugin = execution.getPlugin();
     plugin.flushExecutionMap();
-    for (final PluginExecution pluginExecution : plugin.getExecutions())
+    final List<PluginExecution> executions = plugin.getExecutions();
+    for (final PluginExecution pluginExecution : executions) // [L]
       if (pluginExecution.getId().equals(execution.getExecutionId()))
         return pluginExecution;
 
@@ -64,13 +64,12 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns {@code true} if the specified {@link MojoExecution} is in a
-   * lifecycle phase, and the name of the lifecycle phase contains "test".
+   * Returns {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase
+   * contains "test".
    *
    * @param execution The {@link MojoExecution}.
-   * @return {@code true} if the specified {@link MojoExecution} is in a
-   *         lifecycle phase, and the name of the lifecycle phase contains
-   *         "test".
+   * @return {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase
+   *         contains "test".
    * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static boolean isInTestPhase(final MojoExecution execution) {
@@ -78,15 +77,13 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns {@code true} if a calling MOJO should skip execution due to the
-   * {@code -Dmaven.test.skip} property. If the {@code -Dmaven.test.skip}
-   * property is present, this method will return {@code true} when the phase
-   * name of MOJO or plugin {@code execution} contains the string "test".
+   * Returns {@code true} if a calling MOJO should skip execution due to the {@code -Dmaven.test.skip} property. If the
+   * {@code -Dmaven.test.skip} property is present, this method will return {@code true} when the phase name of MOJO or plugin
+   * {@code execution} contains the string "test".
    *
    * @param execution The {@link MojoExecution}.
    * @param mavenTestSkip The {@code -Dmaven.test.skip} property.
-   * @return {@code true} if a calling MOJO should skip execution due to the
-   *         {@code -Dmaven.test.skip} property.
+   * @return {@code true} if a calling MOJO should skip execution due to the {@code -Dmaven.test.skip} property.
    */
   public static boolean shouldSkip(final MojoExecution execution, final boolean mavenTestSkip) {
     if (!mavenTestSkip)
@@ -100,65 +97,55 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns an {@link Artifact} representation of {@code dependency}, qualified
-   * by {@code artifactHandler}.
+   * Returns an {@link Artifact} representation of {@code dependency}, qualified by {@code artifactHandler}.
    *
    * @param dependency The {@link ComponentDependency}.
    * @param handler The {@link ArtifactHandler}.
-   * @return A {@link Artifact} representation of {@code dependency}, qualified
-   *         by {@code artifactHandler}.
-   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is
-   *           null.
+   * @return A {@link Artifact} representation of {@code dependency}, qualified by {@code artifactHandler}.
+   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is null.
    */
   public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler handler) {
     return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, handler);
   }
 
   /**
-   * Returns an {@link Artifact} representation of {@code dependency}, qualified
-   * by {@code artifactHandler}.
+   * Returns an {@link Artifact} representation of {@code dependency}, qualified by {@code artifactHandler}.
    *
    * @param dependency The {@link Dependency}.
    * @param handler The {@link ArtifactHandler}.
-   * @return A {@link Artifact} representation of {@code dependency}, qualified
-   *         by {@code artifactHandler}.
-   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is
-   *           null.
+   * @return A {@link Artifact} representation of {@code dependency}, qualified by {@code artifactHandler}.
+   * @throws IllegalArgumentException If {@code dependency} or {@code handler} is null.
    */
   public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler handler) {
     return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), handler);
   }
 
   /**
-   * Returns the classpath of dependencies for the {@code pluginDescriptor},
-   * relative to {@code localRepository}.
+   * Returns the classpath of dependencies for the {@code pluginDescriptor}, relative to {@code localRepository}.
    *
    * @param descriptor The {@link PluginDescriptor}.
    * @param localRepository The local {@link ArtifactRepository}.
    * @param handler The {@link ArtifactHandler}.
-   * @return The classpath of dependencies for the {@code pluginDescriptor},
-   *         relative to {@code localRepository}.
-   * @throws IllegalArgumentException If {@code descriptor}, {@code localRepository}
-   *           or {@code handler} is null.
+   * @return The classpath of dependencies for the {@code pluginDescriptor}, relative to {@code localRepository}.
+   * @throws IllegalArgumentException If {@code descriptor}, {@code localRepository} or {@code handler} is null.
    */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) {
-    final List<String> classpath = new ArrayList<>(descriptor.getDependencies().size());
-    for (final ComponentDependency dependency : descriptor.getDependencies())
+    final List<ComponentDependency> dependencies = descriptor.getDependencies();
+    final int len = dependencies.size();
+    final ArrayList<String> classpath = new ArrayList<>(len);
+    for (final ComponentDependency dependency : dependencies) // [L]
       classpath.add(localRepository.getBasedir() + File.separator + localRepository.pathOf(toArtifact(dependency, handler)));
 
     return classpath;
   }
 
   /**
-   * Returns the filesystem path of {@code dependency} located in
-   * {@code localRepository}.
+   * Returns the filesystem path of {@code dependency} located in {@code localRepository}.
    *
    * @param localRepository The local repository reference.
    * @param dependency The dependency.
-   * @return The filesystem path of {@code dependency} located in
-   *         {@code localRepository}.
-   * @throws IllegalArgumentException If {@code localRepository} or
-   *           {@code dependency} is null.
+   * @return The filesystem path of {@code dependency} located in {@code localRepository}.
+   * @throws IllegalArgumentException If {@code localRepository} or {@code dependency} is null.
    */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
     final StringBuilder builder = new StringBuilder();
@@ -180,35 +167,33 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns a string array of dependency paths in the specified
-   * {@link MavenProject}.
+   * Returns a string array of dependency paths in the specified {@link MavenProject}.
    *
    * @param project The {@link MavenProject} for which to return the classpath.
    * @param localRepository The local {@link ArtifactRepository}.
-   * @return A string array of dependency paths in the specified
-   *         {@link MavenProject}.
-   * @throws IllegalArgumentException If {@code project} or {@code localRepository}
-   *           is null.
+   * @return A string array of dependency paths in the specified {@link MavenProject}.
+   * @throws IllegalArgumentException If {@code project} or {@code localRepository} is null.
    */
   public static String[] getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
     final String[] classpath = new String[project.getExecutionProject().getDependencies().size()];
     final List<Dependency> dependencies = project.getExecutionProject().getDependencies();
-    for (int i = 0, len = dependencies.size(); i < len; ++i)
-      classpath[i] = getPathOf(localRepository, dependencies.get(i));
+    final int i$ = dependencies.size();
+    if (i$ > 0) {
+      final Iterator<Dependency> iterator = dependencies.iterator();
+      for (int i = 0; i < i$; ++i) // [I]
+        classpath[i] = getPathOf(localRepository, iterator.next());
+    }
 
     return classpath;
   }
 
   /**
-   * Creates the directory specified by the {@code dir} parameter, including any
-   * necessary but nonexistent parent directories.
+   * Creates the directory specified by the {@code dir} parameter, including any necessary but nonexistent parent directories.
    *
-   * @param name The label name to refer to in case a
-   *          {@link MojoFailureException} is thrown.
+   * @param name The label name to refer to in case a {@link MojoFailureException} is thrown.
    * @param dir The directory path to create.
-   * @throws MojoFailureException If {@code dir} points to an existing path that
-   *           is a file, or {@code dir} or its necessary but nonexistent parent
-   *           directories could not be created.
+   * @throws MojoFailureException If {@code dir} points to an existing path that is a file, or {@code dir} or its necessary but
+   *           nonexistent parent directories could not be created.
    * @throws IllegalArgumentException If {@code dir} is null.
    */
   public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
@@ -222,27 +207,21 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns a {@link File} array of classpath entries of the specified MOJO
-   * project and execution parameters. This method returns classpath entries of
-   * "compile" and "runtime" scopes. And, if the specified execution is
-   * currently in a test phase, this method also returns classpath entries of
-   * the "test" scope, as well as the path entries of the dependency paths in
-   * the specified {@link MavenProject}.
+   * Returns a {@link File} array of classpath entries of the specified MOJO project and execution parameters. This method returns
+   * classpath entries of "compile" and "runtime" scopes. And, if the specified execution is currently in a test phase, this method
+   * also returns classpath entries of the "test" scope, as well as the path entries of the dependency paths in the specified
+   * {@link MavenProject}.
    *
    * @param project The {@link MavenProject}.
    * @param execution The {@link MojoExecution}.
    * @param descriptor The {@link PluginDescriptor}.
-   * @param localRepository The {@link ArtifactRepository} representing the
-   *          local repository.
+   * @param localRepository The {@link ArtifactRepository} representing the local repository.
    * @param handler The {@link ArtifactHandler}.
-   * @return A {@link File} array of classpath entries of the specified MOJO
-   *         project and execution parameters.
-   * @throws DependencyResolutionRequiredException If the specified
-   *           {@link MavenProject} does not meet dependency resolution
+   * @return A {@link File} array of classpath entries of the specified MOJO project and execution parameters.
+   * @throws DependencyResolutionRequiredException If the specified {@link MavenProject} does not meet dependency resolution
    *           requirements.
-   * @throws IllegalArgumentException If {@code project}, {@code execution},
-   *           {@code descriptor}, {@code localRepository} or {@code handler} is
-   *           null.
+   * @throws IllegalArgumentException If {@code project}, {@code execution}, {@code descriptor}, {@code localRepository} or
+   *           {@code handler} is null.
    */
   public static File[] getExecutionClasspath(final MavenProject project, final MojoExecution execution, final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) throws DependencyResolutionRequiredException {
     final List<String> classpath = MojoUtil.getPluginDependencyClassPath(descriptor, localRepository, handler);
@@ -254,7 +233,7 @@ public final class MojoUtil {
     }
 
     final File[] classpathFiles = new File[classpath.size()];
-    for (int i = 0; i < classpathFiles.length; ++i)
+    for (int i = 0; i < classpathFiles.length; ++i) // [A]
       classpathFiles[i] = new File(classpath.get(i));
 
     return classpathFiles;
@@ -263,21 +242,17 @@ public final class MojoUtil {
   private static final Pattern replacePattern = Pattern.compile("^/((([^/])|(\\\\/))+)/((([^/])|(\\\\/))+)/$");
 
   /**
-   * Returns the renamed file name in the specified path as per the regular
-   * expression specified by {@code rename}, or the original file name if
-   * {@code rename} is null. The RegEx pattern specified by {@code rename} must
-   * be in the form:
+   * Returns the renamed file name in the specified path as per the regular expression specified by {@code rename}, or the original
+   * file name if {@code rename} is null. The RegEx pattern specified by {@code rename} must be in the form:
    *
    * <pre>
    * {@code /<search>/<replace>/}
    * </pre>
    *
    * @param path The path whose file name to rename.
-   * @param rename The RegEx pattern by which the file name of {@code path}
-   *          should be renamed.
-   * @return The renamed file name in the specified {@link URL} as per the
-   *         regular expression specified by {@code rename}, or the original
-   *         file name if {@code rename} is null.
+   * @param rename The RegEx pattern by which the file name of {@code path} should be renamed.
+   * @return The renamed file name in the specified {@link URL} as per the regular expression specified by {@code rename}, or the
+   *         original file name if {@code rename} is null.
    * @throws IllegalArgumentException If {@code rename} is malformed.
    * @throws IllegalArgumentException If {@code path} is null.
    * @see StringPaths#getName(String)
