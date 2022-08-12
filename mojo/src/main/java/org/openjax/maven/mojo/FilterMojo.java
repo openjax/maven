@@ -208,9 +208,9 @@ public abstract class FilterMojo extends BaseMojo {
             }
 
             final URL[] classPathURLs = new URL[classPaths.size()];
-            for (int i = 0; i < classPathURLs.length; ++i) { // [A]
-              final String path = classPaths.get(i);
-              classPathURLs[i] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
+            for (int j = 0, j$ = classPathURLs.length; j < j$; ++j) { // [A]
+              final String path = classPaths.get(j);
+              classPathURLs[j] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
             }
 
             try (final URLClassLoader classLoader = new URLClassLoader(classPathURLs, Thread.currentThread().getContextClassLoader())) {
@@ -255,7 +255,7 @@ public abstract class FilterMojo extends BaseMojo {
     final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     final String[] classpath = MojoUtil.getProjectDependencyPaths(project, session.getLocalRepository());
     final URL[] urls = new URL[classpath.length];
-    for (int i = 0; i < classpath.length; ++i) // [A]
+    for (int i = 0, i$ = classpath.length; i < i$; ++i) // [A]
       urls[i] = URLs.create("file", "", classpath[i]);
 
     try (final URLClassLoader dependencyClassLoader = new URLClassLoader(urls, contextClassLoader)) {

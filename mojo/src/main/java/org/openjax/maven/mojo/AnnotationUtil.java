@@ -154,7 +154,7 @@ public final class AnnotationUtil {
       final ClassNode classNode = new ClassNode();
       classReader.accept(classNode, 0);
       final List<FieldNode> fields = classNode.fields;
-      for (int i = 0, len = fields.size(); i < len; ++i) { // [RA]
+      for (int i = 0, i$ = fields.size(); i < i$; ++i) { // [RA]
         final FieldNode fieldNode = fields.get(i);
         if (field.getName().equals(fieldNode.name)) {
           final String desc = "L" + annotationType.getName().replace('.', '/') + ";";

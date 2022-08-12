@@ -233,7 +233,7 @@ public final class MojoUtil {
     }
 
     final File[] classpathFiles = new File[classpath.size()];
-    for (int i = 0; i < classpathFiles.length; ++i) // [A]
+    for (int i = 0, i$ = classpathFiles.length; i < i$; ++i) // [A]
       classpathFiles[i] = new File(classpath.get(i));
 
     return classpathFiles;

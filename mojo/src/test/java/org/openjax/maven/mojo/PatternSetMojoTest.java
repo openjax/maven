@@ -23,10 +23,10 @@ import org.junit.Test;
 public class PatternSetMojoTest {
   private static void test(final String pattern, final String[] pass, final String[] fail) {
     final String regex = PatternSetMojo.convertToRegex(pattern);
-    for (int i = 0; i < pass.length; ++i) // [A]
+    for (int i = 0, i$ = pass.length; i < i$; ++i) // [A]
       assertTrue("Expected pass: " + regex + " " + pass[i], pass[i].matches(regex));
 
-    for (int i = 0; i < fail.length; ++i) // [A]
+    for (int i = 0, i$ = fail.length; i < i$; ++i) // [A]
       assertFalse("Expected fail: " + fail[i], fail[i].matches(regex));
   }
 
