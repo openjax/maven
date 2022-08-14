@@ -193,7 +193,7 @@ public final class AnnotationUtil {
    *           </ul>
    * @throws IllegalArgumentException If the specified {@code annotationType} or {@code memberValues} is null.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"javadoc", "unchecked"})
   static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
     assertNotNull(memberValues);
     return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
