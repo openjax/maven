@@ -63,11 +63,14 @@ public abstract class BaseMojo extends AbstractMojo {
   @Parameter(property="failOnNoOp")
   private boolean failOnNoOp = true;
 
-  @Parameter(property="maven.test.skip")
-  private boolean mavenTestSkip = false;
-
   @Parameter(property="skipTests")
   private boolean skipTests = false;
+
+  @Parameter(property="maven.test.skip.exec")
+  private boolean mavenTestSkipExec = false;
+
+  @Parameter(property="maven.test.skip")
+  private boolean mavenTestSkip = false;
 
   @Parameter(property="skip")
   private boolean skip = false;
@@ -83,6 +86,15 @@ public abstract class BaseMojo extends AbstractMojo {
     return inTestPhase == null ? inTestPhase = MojoUtil.isInTestPhase(execution) : inTestPhase;
   }
 
+  /**
+   * Specifies whether the current execution is run with {@code -DskipTests} or {@code -Dmaven.test.skip.exec}.
+   *
+   * @return Whether the current execution is run with {@code -DskipTests} or {@code -Dmaven.test.skip.exec}.
+   */
+  protected final boolean isSkipTests() {
+    return skipTests || mavenTestSkipExec;
+  }
+
   @Override
   public final void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
@@ -90,8 +102,8 @@ public abstract class BaseMojo extends AbstractMojo {
       return;
     }
 
-    if (MojoUtil.shouldSkip(execution, mavenTestSkip || skipTests)) {
-      getLog().info("Tests are skipped (" + (mavenTestSkip ? "maven.test.skip" : "skipTests") + "=true)");
+    if (MojoUtil.shouldSkip(execution, mavenTestSkip)) {
+      getLog().info("Tests are skipped (maven.test.skip=true)");
       return;
     }
 
