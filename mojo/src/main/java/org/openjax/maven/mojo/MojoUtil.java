@@ -16,12 +16,15 @@
 
 package org.openjax.maven.mojo;
 
+import static org.libj.lang.Assertions.*;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,12 +56,24 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static PluginExecution getPluginExecution(final MojoExecution execution) {
-    final Plugin plugin = execution.getPlugin();
+    final Plugin plugin = assertNotNull(execution).getPlugin();
     plugin.flushExecutionMap();
     final List<PluginExecution> executions = plugin.getExecutions();
-    for (final PluginExecution pluginExecution : executions) // [L]
-      if (pluginExecution.getId().equals(execution.getExecutionId()))
-        return pluginExecution;
+    final int i$ = executions.size();
+    if (i$ > 0) {
+      if (executions instanceof RandomAccess) {
+        for (int i = 0; i < i$; ++i) { // [RA]
+          final PluginExecution pluginExecution = executions.get(i);
+          if (pluginExecution.getId().equals(execution.getExecutionId()))
+            return pluginExecution;
+        }
+      }
+      else {
+        for (final PluginExecution pluginExecution : executions) // [L]
+          if (pluginExecution.getId().equals(execution.getExecutionId()))
+            return pluginExecution;
+      }
+    }
 
     return null;
   }
@@ -73,7 +88,7 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code execution} is null.
    */
   public static boolean isInTestPhase(final MojoExecution execution) {
-    return execution.getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
+    return assertNotNull(execution).getLifecyclePhase() != null && execution.getLifecyclePhase().contains("test");
   }
 
   /**
@@ -105,7 +120,7 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code dependency} or {@code handler} is null.
    */
   public static Artifact toArtifact(final ComponentDependency dependency, final ArtifactHandler handler) {
-    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, handler);
+    return new DefaultArtifact(assertNotNull(dependency).getGroupId(), dependency.getArtifactId(), dependency.getVersion(), null, dependency.getType(), null, assertNotNull(handler));
   }
 
   /**
@@ -117,7 +132,7 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code dependency} or {@code handler} is null.
    */
   public static Artifact toArtifact(final Dependency dependency, final ArtifactHandler handler) {
-    return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), handler);
+    return new DefaultArtifact(assertNotNull(dependency).getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getScope(), dependency.getType(), dependency.getClassifier(), assertNotNull(handler));
   }
 
   /**
@@ -130,6 +145,9 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code descriptor}, {@code localRepository} or {@code handler} is null.
    */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) {
+    assertNotNull(descriptor);
+    assertNotNull(localRepository);
+    assertNotNull(handler);
     final List<ComponentDependency> dependencies = descriptor.getDependencies();
     final int len = dependencies.size();
     final ArrayList<String> classpath = new ArrayList<>(len);
@@ -148,6 +166,8 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code localRepository} or {@code dependency} is null.
    */
   public static String getPathOf(final ArtifactRepository localRepository, final Dependency dependency) {
+    assertNotNull(localRepository);
+    assertNotNull(dependency);
     final StringBuilder builder = new StringBuilder();
     builder.append(localRepository.getBasedir());
     builder.append(File.separatorChar);
@@ -175,6 +195,8 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code project} or {@code localRepository} is null.
    */
   public static String[] getProjectDependencyPaths(final MavenProject project, final ArtifactRepository localRepository) {
+    assertNotNull(project);
+    assertNotNull(localRepository);
     final String[] classpath = new String[project.getExecutionProject().getDependencies().size()];
     final List<Dependency> dependencies = project.getExecutionProject().getDependencies();
     final int i$ = dependencies.size();
@@ -197,6 +219,7 @@ public final class MojoUtil {
    * @throws IllegalArgumentException If {@code dir} is null.
    */
   public static void assertCreateDir(final String name, final File dir) throws MojoFailureException {
+    assertNotNull(dir);
     if (dir.exists()) {
       if (dir.isFile())
         throw new MojoFailureException("Path at " + name + " directory is a file: " + dir.getAbsolutePath());
@@ -225,6 +248,7 @@ public final class MojoUtil {
    */
   public static File[] getExecutionClasspath(final MavenProject project, final MojoExecution execution, final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) throws DependencyResolutionRequiredException {
     final List<String> classpath = MojoUtil.getPluginDependencyClassPath(descriptor, localRepository, handler);
+    assertNotNull(project);
     classpath.addAll(project.getCompileClasspathElements());
     classpath.addAll(project.getRuntimeClasspathElements());
     if (MojoUtil.isInTestPhase(execution)) {

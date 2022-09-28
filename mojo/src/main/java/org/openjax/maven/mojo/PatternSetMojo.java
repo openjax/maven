@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -40,13 +41,15 @@ import org.apache.maven.project.MavenProject;
 public abstract class PatternSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
     final LinkedHashSet<URI> uris = new LinkedHashSet<>();
-    for (final Resource projectResource : projectResources) { // [S]
-      final File dir = new File(projectResource.getDirectory());
-      if (dir.exists()) {
-        Files
-          .walk(dir.toPath())
-          .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
-          .forEach(p -> uris.add(p.toUri()));
+    if (projectResources.size() > 0) {
+      for (final Resource projectResource : projectResources) { // [S]
+        final File dir = new File(projectResource.getDirectory());
+        if (dir.exists()) {
+          Files
+            .walk(dir.toPath())
+            .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
+            .forEach(p -> uris.add(p.toUri()));
+        }
       }
     }
 
@@ -64,15 +67,25 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   private static boolean filter(final File dir, final File pathname, final List<String> filters) {
-    if (filters == null)
-      return false;
-
-    if (filters.size() > 0)
-      for (final String filter : filters) // [L]
-        if (pathname.getAbsolutePath().substring(dir.getAbsolutePath().length() + 1).matches(filter))
-          return true;
+    final int i$;
+    if (filters != null && (i$ = filters.size()) > 0) {
+      if (filters instanceof RandomAccess) {
+        for (int i = 0; i < i$; ++i) // [RA]
+          if (isMatch(dir, pathname, filters.get(i)))
+            return true;
+      }
+      else {
+        for (final String filter : filters) // [L]
+          if (isMatch(dir, pathname, filter))
+            return true;
+      }
+    }
 
     return false;
+  }
+
+  private static boolean isMatch(final File dir, final File pathname, final String filter) {
+    return pathname.getAbsolutePath().substring(dir.getAbsolutePath().length() + 1).matches(filter);
   }
 
   static String convertToRegex(final String pattern) {
