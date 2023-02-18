@@ -154,13 +154,14 @@ public abstract class FilterMojo extends BaseMojo {
               final int i$ = values.size();
               if (i$ > 0) {
                 if (CollectionUtil.isRandomAccess(values)) {
-                  for (int i = 0; i < i$; ++i) // [RA]
+                  int i = 0; do // [RA]
                     values.set(i, filterURL(values.get(i), baseDir).toString());
+                  while (++i < i$);
                 }
                 else {
-                  final Iterator<String> iterator = values.iterator();
-                  for (int i = 0; i < i$; ++i) // [I]
-                    values.set(i, filterURL(iterator.next(), baseDir).toString());
+                  int i = -1; final Iterator<String> it = values.iterator(); do // [I]
+                    values.set(++i, filterURL(it.next(), baseDir).toString());
+                  while (it.hasNext());
                 }
               }
             }
@@ -175,13 +176,14 @@ public abstract class FilterMojo extends BaseMojo {
             final int i$ = resources.size();
             if (i$ > 0) {
               if (CollectionUtil.isRandomAccess(resources)) {
-                for (int i = 0; i < i$; ++i) // [RA]
+                int i = 0; do // [RA]
                   classPaths.add(resources.get(i).getDirectory());
+                while (++i < i$);
               }
               else {
-                final Iterator<Resource> iterator = resources.iterator();
-                for (int i = 0; i < i$; ++i) // [I]
-                  classPaths.add(iterator.next().getDirectory());
+                final Iterator<Resource> it = resources.iterator(); do // [I]
+                  classPaths.add(it.next().getDirectory());
+                while (it.hasNext());
               }
             }
 
@@ -194,12 +196,14 @@ public abstract class FilterMojo extends BaseMojo {
               final int j$ = testResources.size();
               if (j$ > 0) {
                 if (CollectionUtil.isRandomAccess(testResources)) {
-                  for (int j = 0; j < j$; ++j) // [RA]
+                  int j = 0; do // [RA]
                     classPaths.add(testResources.get(j).getDirectory());
+                  while (++j < j$);
                 }
                 else {
-                  for (final Resource testResource : testResources) // [I]
-                    classPaths.add(testResource.getDirectory());
+                  final Iterator<Resource> it = testResources.iterator(); do // [I]
+                    classPaths.add(it.next().getDirectory());
+                  while (it.hasNext());
                 }
               }
 
@@ -219,13 +223,14 @@ public abstract class FilterMojo extends BaseMojo {
                 final int j$ = values.size();
                 if (j$ > 0) {
                   if (CollectionUtil.isRandomAccess(values)) {
-                    for (int j = 0; j < j$; ++j) // [RA]
+                    int j = 0; do // [RA]
                       values.set(j, filterResource(values.get(j), classLoader).toString());
+                    while (++j < j$);
                   }
                   else {
-                    final Iterator<String> iterator = values.iterator();
-                    for (int j = 0; j < j$; ++j) // [I]
-                      values.set(j, filterResource(iterator.next(), classLoader).toString());
+                    int j = -1; final Iterator<String> it = values.iterator(); do // [I]
+                      values.set(++j, filterResource(it.next(), classLoader).toString());
+                    while (it.hasNext());
                   }
                 }
               }

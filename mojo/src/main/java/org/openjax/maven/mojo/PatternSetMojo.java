@@ -37,6 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
 @Mojo(name="patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
@@ -70,14 +71,16 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     final int i$;
     if (filters != null && (i$ = filters.size()) > 0) {
       if (filters instanceof RandomAccess) {
-        for (int i = 0; i < i$; ++i) // [RA]
+        int i = 0; do // [RA]
           if (isMatch(dir, pathname, filters.get(i)))
             return true;
+        while (++i < i$);
       }
       else {
-        for (final String filter : filters) // [L]
-          if (isMatch(dir, pathname, filter))
+        final Iterator<String> i = filters.iterator(); do // [I]
+          if (isMatch(dir, pathname, i.next()))
             return true;
+        while (i.hasNext());
       }
     }
 
