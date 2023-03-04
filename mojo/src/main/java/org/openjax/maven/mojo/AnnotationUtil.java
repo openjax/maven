@@ -16,8 +16,6 @@
 
 package org.openjax.maven.mojo;
 
-import static org.libj.lang.Assertions.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -29,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.libj.util.ArrayUtil;
 import org.objectweb.asm.ClassReader;
@@ -191,11 +190,11 @@ public final class AnnotationUtil {
    *           runtime package} as the non-public interface and the invocation of {@link SecurityManager#checkPermission
    *           s.checkPermission} with {@code ReflectPermission("newProxyInPackage.{package name}")} permission denies access.</li>
    *           </ul>
-   * @throws IllegalArgumentException If the specified {@code annotationType} or {@code memberValues} is null.
+   * @throws NullPointerException If the specified {@code annotationType} or {@code memberValues} is null.
    */
-  @SuppressWarnings({"javadoc", "unchecked"})
+  @SuppressWarnings({"unchecked"})
   static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
-    assertNotNull(memberValues);
+    Objects.requireNonNull(memberValues);
     return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
       @Override
       public Object invoke(final Object proxy, final Method method, final Object[] args) {

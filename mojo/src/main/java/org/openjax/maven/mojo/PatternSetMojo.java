@@ -16,8 +16,6 @@
 
 package org.openjax.maven.mojo;
 
-import static org.libj.lang.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.function.Predicate;
 
@@ -137,21 +136,21 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
     private Configuration(final ResourcesMojo.Configuration configuration, final LinkedHashSet<URI> fileSets, final LinkedHashSet<String> includes, final LinkedHashSet<String> excludes) {
       super(configuration);
-      this.fileSets = assertNotNull(fileSets);
+      this.fileSets = Objects.requireNonNull(fileSets);
       this.includes = includes;
       this.excludes = excludes;
     }
 
     public LinkedHashSet<URI> getFileSets() {
-      return this.fileSets;
+      return fileSets;
     }
 
     public LinkedHashSet<String> getIncludes() {
-      return this.includes;
+      return includes;
     }
 
     public LinkedHashSet<String> getExcludes() {
-      return this.excludes;
+      return excludes;
     }
   }
 
@@ -170,7 +169,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
   private List<String> getIncludes() {
     convert();
-    return this.includes;
+    return includes;
   }
 
   @Parameter(property="excludes")
@@ -178,7 +177,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
 
   private List<String> getExcludes() {
     convert();
-    return this.excludes;
+    return excludes;
   }
 
   @Override

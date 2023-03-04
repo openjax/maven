@@ -25,9 +25,9 @@ public class MojoUtilTest {
   public void testGetRenamedFileName() {
     try {
       MojoUtil.getRenamedFileName((String)null, null);
-      fail("Expected IllegalArgumentException");
+      fail("Expected NullPointerException");
     }
-    catch (final IllegalArgumentException e) {
+    catch (final NullPointerException e) {
     }
   }
 }

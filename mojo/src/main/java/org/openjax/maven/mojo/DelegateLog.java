@@ -16,7 +16,7 @@
 
 package org.openjax.maven.mojo;
 
-import static org.libj.lang.Assertions.*;
+import java.util.Objects;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -33,10 +33,10 @@ public class DelegateLog implements Log {
    * Creates a new {@link DelegateLog} with the specified target {@link Log}.
    *
    * @param target The target {@link Log}.
-   * @throws IllegalArgumentException If the target {@link Log} is null.
+   * @throws NullPointerException If the target {@link Log} is null.
    */
   public DelegateLog(final Log target) {
-    this.log = assertNotNull(target);
+    this.log = Objects.requireNonNull(target);
   }
 
   @Override

@@ -16,16 +16,15 @@
 
 package org.openjax.maven.mojo;
 
-import static org.libj.lang.Assertions.*;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
  * A {@link Log} that defers the output of log messages to the time of the invocation of
- * {@link #flush(Level, CharSequence, Throwable)}.
+ * {@link #flush(Level,CharSequence,Throwable)}.
  */
 public abstract class DeferredLog implements Log {
   private final ArrayList<Entry> entries = new ArrayList<>();
@@ -35,10 +34,10 @@ public abstract class DeferredLog implements Log {
    * Creates a new {@link DeferredLog} with the specified target {@link Log}.
    *
    * @param target The target {@link Log}.
-   * @throws IllegalArgumentException If the target {@link Log} is null.
+   * @throws NullPointerException If the target {@link Log} is null.
    */
   public DeferredLog(final Log target) {
-    this.log = assertNotNull(target);
+    this.log = Objects.requireNonNull(target);
   }
 
   /**
