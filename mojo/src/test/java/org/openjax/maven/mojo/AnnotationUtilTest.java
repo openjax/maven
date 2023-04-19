@@ -40,7 +40,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Mojo(name="name")
 public class AnnotationUtilTest {
-  @Parameter(name="parameter")
+  @Parameter(alias="parameter")
   private String parameter;
 
   private static void test(final Annotation annotation) throws IllegalAccessException, InvocationTargetException {
@@ -64,7 +64,7 @@ public class AnnotationUtilTest {
   public void testGetAnnotationParametersField() throws IOException, NoSuchFieldException {
     final Parameter annotation = AnnotationUtil.getAnnotationParameters(AnnotationUtilTest.class.getDeclaredField("parameter"), Parameter.class);
     assertNotNull(annotation);
-    assertEquals("parameter", annotation.name());
+    assertEquals("parameter", annotation.alias());
   }
 
   @Test
