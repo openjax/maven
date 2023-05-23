@@ -40,11 +40,11 @@ public abstract class GeneratorMojo extends FilterMojo {
     }
 
     public File getDestDir() {
-      return this.destDir;
+      return destDir;
     }
 
     public boolean getOverwrite() {
-      return this.overwrite;
+      return overwrite;
     }
   }
 

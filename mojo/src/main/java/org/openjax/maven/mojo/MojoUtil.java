@@ -17,14 +17,11 @@
 package org.openjax.maven.mojo;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.RandomAccess;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -40,7 +37,6 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.libj.lang.Strings;
-import org.libj.util.StringPaths;
 
 /**
  * Utility functions that perform a variety of operations related to Maven projects, executions, plugins, repositories, and
@@ -61,7 +57,8 @@ public final class MojoUtil {
     final int i$ = executions.size();
     if (i$ > 0) {
       if (executions instanceof RandomAccess) {
-        int i = 0; do { // [RA]
+        int i = 0;
+        do { // [RA]
           final PluginExecution pluginExecution = executions.get(i);
           if (pluginExecution.getId().equals(execution.getExecutionId()))
             return pluginExecution;
@@ -69,7 +66,8 @@ public final class MojoUtil {
         while (++i < i$);
       }
       else {
-        final Iterator<PluginExecution> i = executions.iterator(); do { // [I]
+        final Iterator<PluginExecution> i = executions.iterator();
+        do { // [I]
           final PluginExecution pluginExecution = i.next();
           if (pluginExecution.getId().equals(execution.getExecutionId()))
             return pluginExecution;
@@ -256,35 +254,6 @@ public final class MojoUtil {
       classpathFiles[i] = new File(classpath.get(i));
 
     return classpathFiles;
-  }
-
-  private static final Pattern replacePattern = Pattern.compile("^/((([^/])|(\\\\/))+)/((([^/])|(\\\\/))+)/$");
-
-  /**
-   * Returns the renamed file name in the specified path as per the regular expression specified by {@code rename}, or the original
-   * file name if {@code rename} is null. The RegEx pattern specified by {@code rename} must be in the form:
-   *
-   * <pre>
-   * {@code /<search>/<replace>/}
-   * </pre>
-   *
-   * @param path The path whose file name to rename.
-   * @param rename The RegEx pattern by which the file name of {@code path} should be renamed.
-   * @return The renamed file name in the specified {@link URL} as per the regular expression specified by {@code rename}, or the
-   *         original file name if {@code rename} is null.
-   * @throws IllegalArgumentException If {@code rename} is malformed.
-   * @throws NullPointerException If {@code path} is null.
-   * @see StringPaths#getName(String)
-   */
-  public static String getRenamedFileName(final String path, final String rename) {
-    if (rename == null)
-      return StringPaths.getName(path);
-
-    final Matcher matcher = replacePattern.matcher(rename);
-    if (!matcher.matches())
-      throw new IllegalArgumentException("<rename> tag must have a RegEx in the form: /<search>/<replace>/");
-
-    return StringPaths.getName(path).replaceAll(matcher.group(1), matcher.group(5));
   }
 
   private MojoUtil() {
