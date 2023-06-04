@@ -171,7 +171,7 @@ public abstract class FilterMojo extends BaseMojo {
             }
           }
           else if (filterType == FilterType.RESOURCE) {
-            final List<String> classPaths = new ArrayList<>();
+            final ArrayList<String> classPaths = new ArrayList<>();
             final List<Resource> resources = project.getResources();
             final int i$ = resources.size();
             if (i$ > 0) {
@@ -211,8 +211,9 @@ public abstract class FilterMojo extends BaseMojo {
               classPaths.addAll(project.getTestClasspathElements());
             }
 
-            final URL[] classPathURLs = new URL[classPaths.size()];
-            for (int j = 0, j$ = classPathURLs.length; j < j$; ++j) { // [A]
+            final int len = classPaths.size();
+            final URL[] classPathURLs = new URL[len];
+            for (int j = 0; j < len; ++j) { // [A]
               final String path = classPaths.get(j);
               classPathURLs[j] = new URL("file", "", path.endsWith(".jar") ? path : (path + "/"));
             }
