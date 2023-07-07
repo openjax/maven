@@ -143,7 +143,7 @@ public final class MojoUtil {
    * @param localRepository The local {@link ArtifactRepository}.
    * @param handler The {@link ArtifactHandler}.
    * @return The classpath of dependencies for the {@code pluginDescriptor}, relative to {@code localRepository}.
-   * @throws NullPointerException If {@code descriptor}, {@code localRepository} or {@code handler} is null.
+   * @throws NullPointerException If {@code descriptor}, {@code localRepository}, or {@code handler} is null.
    */
   public static List<String> getPluginDependencyClassPath(final PluginDescriptor descriptor, final ArtifactRepository localRepository, final ArtifactHandler handler) {
     final List<ComponentDependency> dependencies = descriptor.getDependencies();
