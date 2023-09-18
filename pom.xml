@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.openjax</groupId>
     <artifactId>openjax</artifactId>
-    <version>2.5.6-SNAPSHOT</version>
+    <version>2.5.6</version>
   </parent>
   <groupId>org.openjax.maven</groupId>
   <artifactId>maven</artifactId>
-  <version>0.4.3-SNAPSHOT</version>
+  <version>0.4.3</version>
   <packaging>pom</packaging>
   <name>OpenJAX Maven</name>
   <description>
