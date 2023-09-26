@@ -115,7 +115,7 @@ public final class AnnotationUtil {
    * @throws IOException If an I/O error has occurred.
    * @throws IllegalArgumentException If {@code cls} or {@code annotationType} are null.
    */
-  public static <T extends Annotation>T getAnnotationParameters(final Class<?> cls, final Class<T> annotationType) throws IOException {
+  public static <T extends Annotation> T getAnnotationParameters(final Class<?> cls, final Class<T> annotationType) throws IOException {
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(cls.getName().replace('.', '/') + ".class")) {
       if (in == null)
         throw new IllegalStateException("Unable to locate bytecode for class " + cls.getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
@@ -144,7 +144,7 @@ public final class AnnotationUtil {
    * @throws IOException If an I/O error has occurred.
    * @throws IllegalArgumentException If {@code field} or {@code annotationType} are null.
    */
-  public static <T extends Annotation>T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
+  public static <T extends Annotation> T getAnnotationParameters(final Field field, final Class<T> annotationType) throws IOException {
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(field.getDeclaringClass().getName().replace('.', '/') + ".class")) {
       if (in == null)
         throw new IllegalStateException("Unable to locate bytecode for class " + field.getDeclaringClass().getName() + " in context class loader " + Thread.currentThread().getContextClassLoader());
@@ -186,14 +186,14 @@ public final class AnnotationUtil {
    *           <li>for each proxy interface, {@code intf}, the caller's class loader is not the same as or an ancestor of the class
    *           loader for {@code intf} and invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies
    *           access to {@code intf};</li>
-   *           <li>any of the given proxy interfaces is non-public and the caller class is not in the same {@linkplain Package
-   *           runtime package} as the non-public interface and the invocation of {@link SecurityManager#checkPermission
-   *           s.checkPermission} with {@code ReflectPermission("newProxyInPackage.{package name}")} permission denies access.</li>
+   *           <li>any of the given proxy interfaces is non-public and the caller class is not in the same {@linkplain Package runtime
+   *           package} as the non-public interface and the invocation of {@link SecurityManager#checkPermission s.checkPermission}
+   *           with {@code ReflectPermission("newProxyInPackage.{package name}")} permission denies access.</li>
    *           </ul>
    * @throws NullPointerException If the specified {@code annotationType} or {@code memberValues} is null.
    */
   @SuppressWarnings({"unchecked"})
-  static <T extends Annotation>T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
+  static <T extends Annotation> T annotationForMap(final Class<T> annotationType, final Map<String,Object> memberValues) {
     Objects.requireNonNull(memberValues);
     return (T)Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] {annotationType}, new InvocationHandler() {
       @Override

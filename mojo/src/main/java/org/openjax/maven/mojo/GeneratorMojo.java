@@ -23,7 +23,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-@Mojo(name="generator")
+@Mojo(name = "generator")
 public abstract class GeneratorMojo extends FilterMojo {
   public class Configuration extends FilterMojo.Configuration {
     private final File destDir;
@@ -48,10 +48,10 @@ public abstract class GeneratorMojo extends FilterMojo {
     }
   }
 
-  @Parameter(property="destDir", required=true)
+  @Parameter(property = "destDir", required = true)
   private File destDir;
 
-  @Parameter(property="overwrite")
+  @Parameter(property = "overwrite")
   private boolean overwrite = true;
 
   @Override

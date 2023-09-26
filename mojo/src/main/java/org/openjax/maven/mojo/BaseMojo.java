@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
  * <li>skip: Whether the {@link Mojo}'s execution should be skipped. Default: false.</li>
  * </ul>
  */
-@Mojo(name="base")
+@Mojo(name = "base")
 public abstract class BaseMojo extends AbstractMojo {
   public static class Configuration {
     private final boolean failOnNoOp;
@@ -51,28 +51,28 @@ public abstract class BaseMojo extends AbstractMojo {
     }
   }
 
-  @Parameter(defaultValue="${mojoExecution}", required=true, readonly=true)
+  @Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
   protected MojoExecution execution;
 
-  @Parameter(defaultValue="${session}", readonly=true, required=true)
+  @Parameter(defaultValue = "${session}", readonly = true, required = true)
   protected MavenSession session;
 
-  @Parameter(defaultValue="${project}", readonly=true, required=true)
+  @Parameter(defaultValue = "${project}", readonly = true, required = true)
   protected MavenProject project;
 
-  @Parameter(property="failOnNoOp")
+  @Parameter(property = "failOnNoOp")
   private boolean failOnNoOp = true;
 
-  @Parameter(property="skipTests")
+  @Parameter(property = "skipTests")
   private boolean skipTests = false;
 
-  @Parameter(property="maven.test.skip.exec")
+  @Parameter(property = "maven.test.skip.exec")
   private boolean mavenTestSkipExec = false;
 
-  @Parameter(property="maven.test.skip")
+  @Parameter(property = "maven.test.skip")
   private boolean mavenTestSkip = false;
 
-  @Parameter(property="skip")
+  @Parameter(property = "skip")
   private boolean skip = false;
 
   private Boolean inTestPhase;

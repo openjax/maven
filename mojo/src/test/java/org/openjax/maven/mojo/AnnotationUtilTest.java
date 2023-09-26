@@ -36,11 +36,11 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @Nullable
-@RegEx(when=When.MAYBE)
+@RegEx(when = When.MAYBE)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Mojo(name="name")
+@Mojo(name = "name")
 public class AnnotationUtilTest {
-  @Parameter(alias="parameter")
+  @Parameter(alias = "parameter")
   private String parameter;
 
   private static void test(final Annotation annotation) throws IllegalAccessException, InvocationTargetException {

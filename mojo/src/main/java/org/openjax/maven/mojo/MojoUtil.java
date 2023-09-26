@@ -80,12 +80,12 @@ public final class MojoUtil {
   }
 
   /**
-   * Returns {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase
-   * contains "test".
+   * Returns {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase contains
+   * "test".
    *
    * @param execution The {@link MojoExecution}.
-   * @return {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase
-   *         contains "test".
+   * @return {@code true} if the specified {@link MojoExecution} is in a lifecycle phase, and the name of the lifecycle phase contains
+   *         "test".
    * @throws NullPointerException If {@code execution} is null.
    */
   public static boolean isInTestPhase(final MojoExecution execution) {

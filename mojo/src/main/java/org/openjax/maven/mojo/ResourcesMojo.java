@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.libj.util.CollectionUtil;
 
-@Mojo(name="resources")
+@Mojo(name = "resources")
 public abstract class ResourcesMojo extends FilterMojo {
   public class Configuration extends FilterMojo.Configuration {
     private final LinkedHashSet<Resource> mainResources;
@@ -56,10 +56,10 @@ public abstract class ResourcesMojo extends FilterMojo {
     }
   }
 
-  @Parameter(defaultValue="${project.resources}", required=true, readonly=true)
+  @Parameter(defaultValue = "${project.resources}", required = true, readonly = true)
   private List<Resource> mainResources;
 
-  @Parameter(defaultValue="${project.testResources}", required=true, readonly=true)
+  @Parameter(defaultValue = "${project.testResources}", required = true, readonly = true)
   private List<Resource> testResources;
 
   @Override

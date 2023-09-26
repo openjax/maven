@@ -37,7 +37,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name="patternset")
+@Mojo(name = "patternset")
 public abstract class PatternSetMojo extends ResourcesMojo {
   private static LinkedHashSet<URI> getFiles(final MavenProject project, final LinkedHashSet<? extends Resource> projectResources, final PatternSetMojo fileSet) throws IOException {
     final LinkedHashSet<URI> uris = new LinkedHashSet<>();
@@ -70,13 +70,15 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     final int i$;
     if (filters != null && (i$ = filters.size()) > 0) {
       if (filters instanceof RandomAccess) {
-        int i = 0; do // [RA]
+        int i = 0;
+        do // [RA]
           if (isMatch(dir, pathname, filters.get(i)))
             return true;
         while (++i < i$);
       }
       else {
-        final Iterator<String> i = filters.iterator(); do // [I]
+        final Iterator<String> i = filters.iterator();
+        do // [I]
           if (isMatch(dir, pathname, i.next()))
             return true;
         while (i.hasNext());
@@ -164,7 +166,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     }
   }
 
-  @Parameter(property="includes")
+  @Parameter(property = "includes")
   private List<String> includes;
 
   private List<String> getIncludes() {
@@ -172,7 +174,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
     return includes;
   }
 
-  @Parameter(property="excludes")
+  @Parameter(property = "excludes")
   private List<String> excludes;
 
   private List<String> getExcludes() {
