@@ -186,7 +186,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   public final void execute(final ResourcesMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
       final Map<String,Object> filterParameters = getFilterParameters();
-      final LinkedHashSet<URI> fileSets = getFiles(project, configuration.getResources(), this);
+      final LinkedHashSet<URI> fileSets = getFiles(getProject(), configuration.getResources(), this);
       if (fileSets.size() == 0 && (filterParameters == null || filterParameters.isEmpty())) {
         if (configuration.getFailOnNoOp())
           throw new MojoExecutionException("Empty input parameters (failOnNoOp=true)");

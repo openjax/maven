@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 @Mojo(name = "generator")
 public abstract class GeneratorMojo extends FilterMojo {
@@ -61,6 +62,7 @@ public abstract class GeneratorMojo extends FilterMojo {
     getLog().info("Writing files to: " + new File("").getAbsoluteFile().toPath().relativize(destDir.getAbsoluteFile().toPath()).toString());
     execute(new Configuration(configuration, destDir, overwrite));
 
+    final MavenProject project = getProject();
     if (isInTestPhase())
       project.addTestCompileSourceRoot(destDir.getAbsolutePath());
     else

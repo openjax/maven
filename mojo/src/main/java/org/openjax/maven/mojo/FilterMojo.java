@@ -191,7 +191,7 @@ public abstract class FilterMojo extends BaseMojo {
               }
             }
 
-            final ArtifactRepository localRepository = session.getLocalRepository();
+            final ArtifactRepository localRepository = getSession().getLocalRepository();
             classPaths.addAll(MojoUtil.getPluginDependencyClassPath((PluginDescriptor)getPluginContext().get("pluginDescriptor"), localRepository, new DefaultArtifactHandler("jar")));
             classPaths.addAll(project.getRuntimeClasspathElements());
             classPaths.addAll(project.getCompileClasspathElements());
@@ -268,7 +268,7 @@ public abstract class FilterMojo extends BaseMojo {
   @Override
   public final void execute(final BaseMojo.Configuration configuration) throws MojoExecutionException, MojoFailureException {
     final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    final String[] classpath = MojoUtil.getProjectDependencyPaths(project, session.getLocalRepository());
+    final String[] classpath = MojoUtil.getProjectDependencyPaths(getProject(), getSession().getLocalRepository());
     final URL[] urls = new URL[classpath.length];
     for (int i = 0, i$ = classpath.length; i < i$; ++i) // [A]
       urls[i] = URLs.create("file", "", classpath[i]);

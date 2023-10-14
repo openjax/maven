@@ -47,18 +47,21 @@ public abstract class BaseMojo extends AbstractMojo {
     }
 
     public boolean getFailOnNoOp() {
-      return this.failOnNoOp;
+      return failOnNoOp;
     }
   }
 
   @Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
-  protected MojoExecution execution;
+  private MojoExecution execution;
 
   @Parameter(defaultValue = "${session}", readonly = true, required = true)
-  protected MavenSession session;
+  private MavenSession session;
 
   @Parameter(defaultValue = "${project}", readonly = true, required = true)
-  protected MavenProject project;
+  private MavenProject project;
+
+  @Parameter(defaultValue = "${settings.offline}", required = true, readonly = true)
+  private boolean offline;
 
   @Parameter(property = "failOnNoOp")
   private boolean failOnNoOp = true;
@@ -77,13 +80,49 @@ public abstract class BaseMojo extends AbstractMojo {
 
   private Boolean inTestPhase;
 
+  protected MojoExecution getExecution() {
+    return execution;
+  }
+
+  protected MavenSession getSession() {
+    return session;
+  }
+
+  protected MavenProject getProject() {
+    return project;
+  }
+
+  protected boolean getOffline() {
+    return offline;
+  }
+
+  protected boolean getFailOnNoOp() {
+    return failOnNoOp;
+  }
+
+  protected boolean getMavenTestSkipExec() {
+    return mavenTestSkipExec;
+  }
+
+  protected boolean getMavenTestSkip() {
+    return mavenTestSkip;
+  }
+
+  protected boolean getSkip() {
+    return skip;
+  }
+
+  protected Boolean getInTestPhase() {
+    return inTestPhase;
+  }
+
   /**
    * Specifies whether the current execution is in a test phase, which includes any phase whose name contains "test".
    *
    * @return Whether the current execution is in a test phase, which includes any phase whose name contains "test".
    */
   protected final boolean isInTestPhase() {
-    return inTestPhase == null ? inTestPhase = MojoUtil.isInTestPhase(execution) : inTestPhase;
+    return inTestPhase == null ? inTestPhase = MojoUtil.isInTestPhase(getExecution()) : inTestPhase;
   }
 
   /**
@@ -102,7 +141,7 @@ public abstract class BaseMojo extends AbstractMojo {
       return;
     }
 
-    if (MojoUtil.shouldSkip(execution, mavenTestSkip)) {
+    if (MojoUtil.shouldSkip(getExecution(), mavenTestSkip)) {
       getLog().info("Tests are skipped (maven.test.skip=true)");
       return;
     }
