@@ -44,11 +44,11 @@ public abstract class ResourcesMojo extends FilterMojo {
     }
 
     public LinkedHashSet<Resource> getMainResources() {
-      return this.mainResources;
+      return mainResources;
     }
 
     public LinkedHashSet<Resource> getTestResources() {
-      return this.testResources;
+      return testResources;
     }
 
     public LinkedHashSet<Resource> getResources() {
