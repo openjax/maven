@@ -1,14 +1,17 @@
 # Changes by Version
 
-## [v0.5.0-SNAPSHOT](https://github.com/libj/util/compare/a77a72f24b5b66bf63b9340b440008e45afc203a..HEAD)
+## [v0.5.1-SNAPSHOT](https://github.com/libj/util/compare/da93386daca574a71157fbbff7b7e7f3775bf0a0..HEAD)
+
+## [v0.5.0](https://github.com/libj/util/compare/a77a72f24b5b66bf63b9340b440008e45afc203a..da93386daca574a71157fbbff7b7e7f3775bf0a0) (2024-02-27)
+* #9 Private visibility for injected variables of `BaseMojo`
 
 ## [v0.4.3](https://github.com/openjax/maven/compare/b2f8348bd4204551138ab972d3b7c9a60c76db54..a77a72f24b5b66bf63b9340b440008e45afc203a) (2023-09-20)
 * #7 Don't abort plugin execution in test phase
-* #6 Add DeferredLog and DelegateLog abstractions
-* #5 Implement getAnnotationParameters(Class<?>,Class<Annotation>)
+* #6 Add `DeferredLog` and `DelegateLog` abstractions
+* #5 Implement `getAnnotationParameters(Class<?>,Class<Annotation>)`
 * #4 Transition to GitHub Actions
-* #3 Support classpath:// references in FilterMojo
-* #2 Change MojoUtil.getProjectDependencyPaths() to return String[]
+* #3 Support `classpath://` references in `FilterMojo`
+* #2 Change `MojoUtil.getProjectDependencyPaths()` to return `String[]`
 * #1 Inherit Maven dependency versions from root POM
 
 ## [v0.4.2](https://github.com/openjax/maven/compare/c79e67b4bd2dda4c14d69bfeda3383b47669be52..b2f8348bd4204551138ab972d3b7c9a60c76db54) (2020-05-23)
