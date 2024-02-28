@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.openjax.maven</groupId>
     <artifactId>maven</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1-SNAPSHOT</version>
   </parent>
   <artifactId>mojo</artifactId>
   <name>OpenJAX Maven Mojo</name>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.libj</groupId>
       <artifactId>net</artifactId>
-      <version>0.5.4</version>
+      <version>0.5.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
