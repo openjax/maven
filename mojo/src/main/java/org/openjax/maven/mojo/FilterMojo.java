@@ -95,7 +95,7 @@ public abstract class FilterMojo extends BaseMojo {
       return filteredParameters;
 
     wasFiltered = true;
-    final Field[] fields = Classes.getDeclaredFieldsDeep(getClass(), Throwing.<Field>rethrow(f -> AnnotationUtil.getAnnotationParameters(f, FilterParameter.class) != null));
+    final Field[] fields = Classes.getDeclaredFieldsDeep(getClass(), Throwing.<Field>rethrow((final Field f) -> AnnotationUtil.getAnnotationParameters(f, FilterParameter.class) != null));
     if (fields == null || fields.length == 0)
       return null;
 

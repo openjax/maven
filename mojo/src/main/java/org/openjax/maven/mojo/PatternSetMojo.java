@@ -48,7 +48,7 @@ public abstract class PatternSetMojo extends ResourcesMojo {
           Files
             .walk(dir.toPath())
             .filter(PatternSetMojo.filter(project.getBasedir(), fileSet))
-            .forEach(p -> uris.add(p.toUri()));
+            .forEach((final Path p) -> uris.add(p.toUri()));
         }
       }
     }
@@ -57,8 +57,8 @@ public abstract class PatternSetMojo extends ResourcesMojo {
   }
 
   private static Predicate<Path> filter(final File dir, final PatternSetMojo fileSet) {
-    return path -> {
-      final File file = path.toFile();
+    return (final Path p) -> {
+      final File file = p.toFile();
       if (!file.isFile())
         return false;
 
